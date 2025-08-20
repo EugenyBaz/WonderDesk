@@ -1,10 +1,10 @@
-
-
+from django.contrib import messages
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, VerificationCodeForm
 from users.models import User
 from users.utils import generate_verification_code, send_sms
 
@@ -31,5 +31,33 @@ class UserCreateView(SuccessMessageMixin,CreateView):
 
         # Временное хранение кода в сессии
         self.request.session['verification_code'] = verification_code
+        self.request.session['phone_number'] = user.phone_number
 
         return super().form_valid(form)
+
+
+
+def verify_phone(request):
+    if request.method == 'POST':
+        form = VerificationCodeForm(request.POST)
+        if form.is_valid():
+            entered_code = form.cleaned_data['code']
+            expected_code = request.session.get('verification_code')
+            if entered_code == expected_code:
+                # Код подтвержден, активируем пользователя
+                user = User.objects.get(phone_number=request.session.get('phone_number'))
+                user.is_active = True
+                user.save()
+
+                # Удаляем код из сессии
+                del request.session['verification_code']
+                del request.session['phone_number']
+
+                messages.success(request, "Регистрация успешно завершена!")
+                return redirect('users:login')
+            else:
+                form.add_error(None, "Неверный код подтверждения")
+    else:
+        form = VerificationCodeForm()
+
+    return render(request, 'users/verify_phone.html', {'form': form})
