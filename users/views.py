@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -12,6 +14,8 @@ from users.forms import UserRegisterForm, VerificationCodeForm
 from users.models import User
 from users.serializers import UserSerializer
 from users.utils import generate_verification_code, send_sms
+from django.contrib.auth.views import LogoutView as BaseLogoutView
+from django.conf import settings
 
 
 class UserCreateView(SuccessMessageMixin,CreateView):
@@ -40,7 +44,7 @@ class UserCreateView(SuccessMessageMixin,CreateView):
         self.request.session['password'] = password
 
         # return super().form_valid(form)
-
+        logout(self.request)
         return redirect("users:verify-phone")
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -97,4 +101,15 @@ def verify_phone(request):
         form = VerificationCodeForm()
 
     return render(request, 'users/verify_phone.html', {'form': form})
+
+class CustomLogoutView(BaseLogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        # Обеспечиваем полный выход пользователя
+        logout(request)
+
+        response = super().dispatch(request, *args, **kwargs)
+        response.delete_cookie(settings.SESSION_COOKIE_NAME)
+
+        # Перенаправляем пользователя на главную страницу
+        return HttpResponseRedirect("/")
 

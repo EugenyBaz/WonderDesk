@@ -1,5 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'posts/home.html' %}
+{% load my_tags%}
+{% block content %}
+
+<style>
+
+    /* Поля формы адаптированы под тёмный фон */
+    input[type=text], input[type="password"], select, textarea {
+        background-color: #495057 ; /* Тёмный фон */
+        color: #fafafa; /* Светлый текст */
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Размер шрифта плейсхолдера уменьшен */
+    input[type=text]::placeholder,
+    input[type="password"]::placeholder,
+    textarea::placeholder {
+        font-size: 11px; /* Устанавливаем нужный размер шрифта */
+        color: #fafafa;
+}
+
+        /* Стили кнопок */
+    button.btn,
+    a.btn {
+        font-size: 0,7rem;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    button.btn-primary,
+    a.btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    button.btn-primary:hover,
+    a.btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004990;
+    }
+
+    /* Кнопка отмены */
+    a.btn-outline-primary {
+        color: #007bff;
+        background-color: transparent;
+        border-color: #007bff;
+    }
+
+    a.btn-outline-primary:hover {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn {
+        font-size: 0.7rem; /* Уменьшаем шрифт */
+    }
+
+
+</style>
+
 <head>
     <meta charset="UTF-8">
     <title>Подтверждение телефона</title>
@@ -10,8 +75,10 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Подтвердить</button>
+            <button type="submit" class="btn btn-primary">Подтвердить</button>
         </form>
     </div>
 </body>
 </html>
+
+{% endblock %}

@@ -19,6 +19,29 @@
         .btn {
         font-size: 0.7rem; /* Уменьшаем шрифт */
     }
+        .blocked-content {position: relative;}
+
+        .overlay-blocker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.7); /* Прозрачный фон */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000; /* Важно для перекрытия основного контента */
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .video-disabled video {
+            pointer-events: none; /* Запрещаем взаимодействие с элементами видео */
+            visibility: hidden;   /* Прячем само видео, оставляя только превью */
+        }
     </style>
 
 <div class="container">
@@ -32,10 +55,7 @@
                     </video>
                 {% elif post.media_type == 'IMAGE' %}
                     <img src="{{post.file | media_filter}}" class="card-img-center" style="height: 250px; object-fit: contain;" alt="{{ post.title }}">
-                {% elif post.media_type == 'TEXT' %}
-                    <pre>{{ post.file.read }}</pre>
-                {% else %}
-                    <p>Тип файла неизвестен</p>
+
                 {% endif %}
 
                 <div class="card-body">
@@ -45,7 +65,6 @@
                 </div>
 
                 <div class="ms-3 mb-2">
-                    <a class="p-2 btn btn-outline-primary mt-0" href="#">Купить</a>
                     {% if request.user == post.author %}
                         <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_update' post.id %}">Редактировать</a>
                     {% endif %}
@@ -53,6 +72,14 @@
                         <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_delete' post.id %}">Удалить</a>
                     {% endif %}
                     <a class="p-2 btn btn-outline-primary" href="/">Назад</a>
+                    <!-- Наложение замка -->
+                    {% if post.premium and user.phone_number != post.author.phone_number %}
+                        <div class="overlay-blocker">
+                            <i class="fas fa-lock fa-3x"></i>
+                            <p>Данный контент доступен только подписчикам.</p>
+                            <a href="#" class="btn btn-outline-primary">Оформить подписку</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

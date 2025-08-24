@@ -1,6 +1,8 @@
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
+
 from posts.service import get_post_by_chapter
 from django.core.cache import cache
 
@@ -10,14 +12,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden
 
 from posts.forms import PostForm
-from posts.models import Post, Chapter
+from posts.models import Post, Chapter, Subscription
 
 
 class PostListView(ListView):
     model = Post
 
 
-class PostDetailView(LoginRequiredMixin, DetailView):
+class PostDetailView(DetailView):
     model = Post
 
 
@@ -104,3 +106,28 @@ class PostByChapterView(ListView):
         chapter_id = self.kwargs.get("chapter_id")
         context["current_chapter"] = Chapter.objects.get(pk=chapter_id)
         return context
+
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # Бесплатные посты видны всем
+    if not post.premium:
+        return render(request, "posts:post_detail", {'post': post})
+
+    # Платные посты видим только подписанным пользователям
+    try:
+        subscription = Subscription.objects.get(user=request.user)
+        if subscription.active:
+            return render(request, "posts:post_detail", {'post': post})
+        else:
+            return redirect('/subscribe/')
+    except Subscription.DoesNotExist:
+        return redirect('/subscribe/')
+
+def post_detail_check(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    file_contents = ""
+    if post.file:
+        file_contents = mark_safe(post.file.read())
+    return render(request, "posts:post_detail", {'post': post, 'file_contents': file_contents})

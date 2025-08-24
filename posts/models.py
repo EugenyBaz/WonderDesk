@@ -24,12 +24,11 @@ class MediaType(models.TextChoices):
 
 
 class Post(models.Model):
-    series = models.ForeignKey(Chapter, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True, verbose_name= "Глава")
+    series = models.ForeignKey(Chapter, related_name='chapter_posts', on_delete=models.SET_NULL, null=True, blank=True, verbose_name= "Глава")
     title = models.CharField(max_length=255, verbose_name = "Название поста" )
     description = models.TextField(blank=True, verbose_name = "Описание поста" )
     media_type = models.CharField(max_length=10, choices=MediaType.choices, default=MediaType.TEXT)
     file = models.FileField(upload_to='uploads/%Y/%m/%d/', blank=True, null=True, verbose_name = "Медиафайлы" )  # Загрузка медиафайлов
-    content = models.TextField(blank=True, verbose_name = "Текст" )  # Текстовое содержание
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "Автор" )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name = "Цена" )
     public = models.BooleanField(default=True, verbose_name = "Публикация" )  # Открытый доступ
@@ -78,10 +77,11 @@ class Subscription(models.Model):
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions', verbose_name = "Подписчик" )
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers', verbose_name = "Автор" )
     subscribed_at = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = "Подписчик"
-        verbose_name_plural = "Подписчики"
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
         unique_together = ("subscriber", "author")
 
     def __str__(self):
