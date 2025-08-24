@@ -1,0 +1,19 @@
+
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 dark-theme border-bottom box-shadow">
+     <h5 class="my-0 mr-md-auto font-weight-normal logo">WD</h5>
+
+
+    <nav class="ms-5">
+        <a class="p-2 btn btn-outline-primary" href="/">Каталог</a>
+        <a class="p-2 btn btn-outline-primary" href="/contacts/">Контакты</a>
+        <a class="p-2 btn btn-outline-primary" href='#'>Блог</a>
+        {% if user.is_authenticated %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:logout' %}">Выход</a>
+        {% else %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Вход</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
+        <span class="text-right text-primary ">{{ user.email }}</span>
+    </nav>
+
+</div>

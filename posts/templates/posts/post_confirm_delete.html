@@ -1,0 +1,22 @@
+{% extends 'posts/home.html' %}
+{% block content %}
+
+<div class = 'container'>
+    <div class = 'row'>
+        <div class = 'col'>
+            <form class = "row" method = "post" enctype="multipart/form-data">
+                <div class = "card">
+                    <p class="card-text h5">Действительно ли вы хотите удалить пост - {{object.title}}?</p>
+                    <div class = "card-body">
+                        {% csrf_token %}
+                    </div>
+                    <nav class = "ms -5">
+                         <button type="submit" class="btn btn-primary">Удалить</button>
+                         <a class="p-2 btn btn-outline-primary" href="/">Отменить удаление</a>
+                    </nav>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

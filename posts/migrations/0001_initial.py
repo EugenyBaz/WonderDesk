@@ -73,8 +73,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="like",
-            name="post",
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="posts.post"),
+            name="posts",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="posts.posts"),
         ),
         migrations.CreateModel(
             name="Comment",
@@ -84,9 +84,9 @@ class Migration(migrations.Migration):
                 ("timestamp", models.DateTimeField(auto_now_add=True)),
                 ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 (
-                    "post",
+                    "posts",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="comments", to="posts.post"
+                        on_delete=django.db.models.deletion.CASCADE, related_name="comments", to="posts.posts"
                     ),
                 ),
             ],
@@ -120,7 +120,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name="post",
+            model_name="posts",
             name="series",
             field=models.ForeignKey(
                 blank=True,

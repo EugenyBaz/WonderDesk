@@ -1,0 +1,74 @@
+{% extends 'posts/home.html' %}
+{% load my_tags %}
+
+{% block content %}
+
+<style>
+    /* Основные стили для карточки формы */
+    .card {
+        width: 50rem; /* Фиксированная ширина */
+        padding: 1.5rem;
+        background-color: #212529; /* Тёмный фон */
+        color: #fafafa; /* Светлый текст */
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    /* Поля формы адаптированы под тёмный фон */
+    input[type=text], select, textarea {
+        background-color: #495057 !important;
+        color: #fafafa !important;
+        border-color: #adb5bd !important;
+    }
+
+     .btn {
+        font-size: 0.7rem; /* Уменьшаем шрифт */
+    }
+
+
+
+</style>
+
+<div class="container">
+    <div class="row text-start">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Свяжитесь с нами</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" class="form-floating">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name">Имя</label>
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Ваше имя" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone">Телефон</label>
+                            <input type="text" name="phone" class="form-control" id="phone" placeholder="Контактный телефон" required>
+                        </div>
+                        <div class="mb-5">
+                            <label for="message">Сообщение</label>
+                            <textarea type="text" name="message" class="form-control" id="message" placeholder="Ваше сообщение" required></textarea>
+                        </div>
+                        <div class="d-grid justify-content-center" style="margin-top: 6rem;">
+                            <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключите статические файлы со скриптами Bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}

@@ -1,16 +1,17 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from users.models import User
 
 
-class Series(models.Model):
-    title = models.CharField(max_length=255, verbose_name = "Название материала" )
-    description = models.TextField(blank=True, verbose_name = "Описание материала")
-    cover_image = models.ImageField(upload_to='series_covers/', blank=True, null=True, verbose_name= "Изображение материала")
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "Автор" )
+class Chapter(models.Model):
+    title = models.CharField(max_length=255, verbose_name = "Название главы" )
+    description = models.TextField(blank=True, verbose_name = "Описание главы")
+    cover_image = models.ImageField(upload_to='series_covers/', blank=True, null=True, verbose_name= "Изображение главы")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "Автор главы" )
 
     class Meta:
-        verbose_name = "Материал"
-        verbose_name_plural = "Материалы"
+        verbose_name = "Глава"
+        verbose_name_plural = "Главы"
 
     def __str__(self):
         return self.title
@@ -23,7 +24,7 @@ class MediaType(models.TextChoices):
 
 
 class Post(models.Model):
-    series = models.ForeignKey(Series, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True)
+    series = models.ForeignKey(Chapter, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True, verbose_name= "Глава")
     title = models.CharField(max_length=255, verbose_name = "Название поста" )
     description = models.TextField(blank=True, verbose_name = "Описание поста" )
     media_type = models.CharField(max_length=10, choices=MediaType.choices, default=MediaType.TEXT)
@@ -70,7 +71,7 @@ class Comment(models.Model):
         verbose_name_plural = "Комментарии"
 
     def __str__(self):
-        return f"{self.user.username}: {self.text[:50]}"
+        return f"{self.user.email}: {self.text[:50]}"
 
 
 class Subscription(models.Model):
@@ -84,6 +85,6 @@ class Subscription(models.Model):
         unique_together = ("subscriber", "author")
 
     def __str__(self):
-        return f"{self.subscriber.username} подписался на {self.author.username}"
+        return f"{self.subscriber.email} подписался на {self.author.email}"
 
 
