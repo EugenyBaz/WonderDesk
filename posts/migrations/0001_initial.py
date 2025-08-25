@@ -1,0 +1,164 @@
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name="Chapter",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=255, verbose_name="Название главы")),
+                ("description", models.TextField(blank=True, verbose_name="Описание главы")),
+                (
+                    "cover_image",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="series_covers/", verbose_name="Изображение главы"
+                    ),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Автор главы",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Глава",
+                "verbose_name_plural": "Главы",
+            },
+        ),
+        migrations.CreateModel(
+            name="Like",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                "verbose_name": "Лайк",
+                "verbose_name_plural": "Лайки",
+            },
+        ),
+        migrations.CreateModel(
+            name="Post",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=255, verbose_name="Название поста")),
+                ("description", models.TextField(blank=True, verbose_name="Описание поста")),
+                (
+                    "media_type",
+                    models.CharField(
+                        choices=[("TEXT", "Текстовый пост"), ("VIDEO", "Видео"), ("IMAGE", "Изображение")],
+                        default="TEXT",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "file",
+                    models.FileField(blank=True, null=True, upload_to="uploads/%Y/%m/%d/", verbose_name="Медиафайлы"),
+                ),
+                ("content", models.TextField(blank=True, verbose_name="Текст")),
+                ("price", models.DecimalField(decimal_places=2, default=0.0, max_digits=10, verbose_name="Цена")),
+                ("public", models.BooleanField(default=True, verbose_name="Публикация")),
+                ("premium", models.BooleanField(default=False, verbose_name="Платный материал")),
+                ("sequence_order", models.PositiveIntegerField(blank=True, null=True)),
+                ("view_count", models.PositiveIntegerField(default=0, verbose_name="Счетчик просмотров")),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name="Автор"
+                    ),
+                ),
+                (
+                    "likes",
+                    models.ManyToManyField(
+                        related_name="liked_posts",
+                        through="posts.Like",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Лайки",
+                    ),
+                ),
+                (
+                    "series",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="chapter_posts",
+                        to="posts.chapter",
+                        verbose_name="Глава",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Пост",
+                "verbose_name_plural": "Посты",
+            },
+        ),
+        migrations.AddField(
+            model_name="like",
+            name="post",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="posts.post"),
+        ),
+        migrations.CreateModel(
+            name="Comment",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("text", models.TextField()),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="comments", to="posts.post"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Комментарий",
+                "verbose_name_plural": "Комментарии",
+            },
+        ),
+        migrations.CreateModel(
+            name="Subscription",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("subscribed_at", models.DateTimeField(auto_now_add=True)),
+                ("active", models.BooleanField(default=False)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscribers",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Автор",
+                    ),
+                ),
+                (
+                    "subscriber",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Подписчик",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Подписка",
+                "verbose_name_plural": "Подписки",
+                "unique_together": {("subscriber", "author")},
+            },
+        ),
+    ]

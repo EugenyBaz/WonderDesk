@@ -36,8 +36,13 @@
             right: 0;
             bottom: 0;
             left: 0;
+            width: 100%; /* Ширина равна ширине мультимедийного элемента */
+            height: 70%; /* Высота равна высоте мультимедийного элемента */
         }
 
+        .card img, .card video { /* Для видео и изображений */
+            position: relative; /* Нужна позиция relative, чтобы overlay находился относительно них */
+        }
         .video-disabled video {
             pointer-events: none; /* Запрещаем взаимодействие с элементами видео */
             visibility: hidden;   /* Прячем само видео, оставляя только превью */
@@ -55,7 +60,6 @@
                     </video>
                 {% elif post.media_type == 'IMAGE' %}
                     <img src="{{post.file | media_filter}}" class="card-img-center" style="height: 250px; object-fit: contain;" alt="{{ post.title }}">
-
                 {% endif %}
 
                 <div class="card-body">

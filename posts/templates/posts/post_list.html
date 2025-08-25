@@ -75,6 +75,12 @@
             right: 0;
             bottom: 0;
             left: 0;
+            width: 100%; /* Ширина равна ширине мультимедийного элемента */
+            height: 65%; /* Высота равна высоте мультимедийного элемента */
+        }
+
+        .card img, .card video { /* Для видео и изображений */
+            position: relative; /* Нужна позиция relative, чтобы overlay находился относительно них */
         }
 
         .video-disabled video {
@@ -122,17 +128,14 @@
                             <p>Данный контент доступен только подписчикам.</p>
                         </div>
                     {% endif %}
-
                 {% endif %}
-
-
-                    <div class="card-body">
-                        <h6 class="card-title">{{ post.title }}</h6>
-                        <p class="card-text">{{ post.description | truncatechars:100 }}</p>
-                    </div>
-                    <div class="card-body">
-                        <a class="p-2 btn btn-outline-primary mb-0 card-link" href="{% url 'posts:post_detail' post.pk %}">Подробнее</a>
-                    </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ post.title }}</h6>
+                    <p class="card-text">{{ post.description | truncatechars:100 }}</p>
+                </div>
+                <div class="card-body">
+                    <a class="p-2 btn btn-outline-primary mb-0 card-link" href="{% url 'posts:post_detail' post.pk %}">Подробнее</a>
+                </div>
             </div>
         </div>
 
