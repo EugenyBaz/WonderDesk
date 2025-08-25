@@ -81,7 +81,14 @@
                         <div class="overlay-blocker">
                             <i class="fas fa-lock fa-3x"></i>
                             <p>Данный контент доступен только подписчикам.</p>
-                            <a href="#" class="btn btn-outline-primary">Оформить подписку</a>
+                            {% if request.user.is_authenticated %}
+                                <form action="{% url 'users:payments_create' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="paid_post" value="{{ post.id }}">
+                                    <input type="hidden" name="amount" value="{{ post.price }}">
+                                    <button type="submit" class="btn btn-outline-primary">Оплатить подписку</button>
+                                </form>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

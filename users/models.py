@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from django.contrib.auth.models import BaseUserManager
+
+from config import settings
 
 
 class CustomUserManager(BaseUserManager):
@@ -36,4 +40,50 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.phone_number
+
+PAYMENT_METHODS = (("cash", "Наличные"), ("transfer", "Перевод на счёт"))
+
+class Payment(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    payment_date = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата платежа"
+    )
+    paid_chapter = models.ForeignKey(
+        "posts.Chapter",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Оплаченный курс/блок",
+    )
+    paid_post = models.ForeignKey(
+        "posts.Post",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Отдельно оплаченный пост",
+    )
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты"
+    )
+    method = models.CharField(
+        max_length=10,
+        choices=PAYMENT_METHODS,
+        default="cash",
+        verbose_name="Способ оплаты",
+    )
+    stripe_payment_id = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="ID платежа в Stripe"
+    )
+    link_payment = models.URLField(
+        max_length=400, verbose_name="Ссылка на оплату", blank=True, null=True
+    )
+
+    class Meta:
+        verbose_name = "Платёж"
+        verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        return f"Платёж {self.user.email}, {self.payment_date}"
 

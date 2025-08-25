@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User, Payment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -7,3 +7,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields =  ["id", "phone_number", "email", "password"]
         extra_kwargs = {"password": {"write_only": True}}
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['amount', 'paid_post', 'user', 'stripe_payment_id', 'link_payment']
+        extra_kwargs = {
+            'user': {'read_only': True},  # Сделал поле read-only
+        }

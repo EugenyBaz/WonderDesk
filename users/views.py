@@ -5,14 +5,18 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
+from rest_framework.exceptions import ValidationError
+from rest_framework.filters import OrderingFilter
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from users.forms import UserRegisterForm, VerificationCodeForm
-from users.models import User
-from users.serializers import UserSerializer
+from users.models import User, Payment
+from users.serializers import UserSerializer, PaymentSerializer
+from users.services import create_stripe_price, create_stripe_session, create_stripe_product
 from users.utils import generate_verification_code, send_sms
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.conf import settings
@@ -44,7 +48,6 @@ class UserCreateView(SuccessMessageMixin,CreateView):
         self.request.session['password'] = password
 
         # return super().form_valid(form)
-        logout(self.request)
         return redirect("users:verify-phone")
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -113,3 +116,35 @@ class CustomLogoutView(BaseLogoutView):
         # Перенаправляем пользователя на главную страницу
         return HttpResponseRedirect("/")
 
+class PaymentListView(generics.ListAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["paid_chapter", "paid_post", "method"]
+    ordering_fields = ["payment_date"]
+
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+
+        payment = serializer.save(user=self.request.user)
+
+        # if payment.paid_chapter is None:
+        #     raise ValidationError("Необходимо выбрать пост для оплаты.")
+
+        # Проверь, что paid_post не равен None
+        if payment.paid_post is None:
+            raise ValidationError("Пост не найден.")
+
+        post_id = create_stripe_product(payment.paid_post.title)
+        amount_in_rub = payment.amount
+        price = create_stripe_price(post_id, amount_in_rub)
+        session_id, payment_link = create_stripe_session(price)
+        payment.stripe_payment_id = session_id
+        payment.link_payment = payment_link
+        payment.save()
