@@ -51,6 +51,7 @@
 
 <div class="container">
     <div class="row text-center">
+
         <div class="col">
             <div class="card" style="width: 25rem; height: 33rem;">
                 {% if post.media_type == 'VIDEO' %}
@@ -82,10 +83,11 @@
                             <i class="fas fa-lock fa-3x"></i>
                             <p>Данный контент доступен только подписчикам.</p>
                             {% if request.user.is_authenticated %}
-                                <form action="{% url 'users:payments_create' %}" method="post">
+                                <form id="payment-form" action="{% url 'users:payments_create' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="paid_post" value="{{ post.id }}">
                                     <input type="hidden" name="amount" value="{{ post.price }}">
+                                    <input type="hidden" name="Authorization" value="Bearer {{ access_token }}">
                                     <button type="submit" class="btn btn-outline-primary">Оплатить подписку</button>
                                 </form>
                             {% endif %}
@@ -97,4 +99,6 @@
     </div>
 </div>
 
+
 {% endblock %}
+

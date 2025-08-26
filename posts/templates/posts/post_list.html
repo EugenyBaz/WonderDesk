@@ -142,6 +142,23 @@
         {% endfor %}
 
     </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="p-2 btn btn-outline-primary" href="?page=1">« first</a>
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="list-unstyled text-small" style="color: var(--bs-primary);">
+                Страница  {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.next_page_number }}">next</a>
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.paginator.num_pages }}">last »</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 
 {% endblock %}

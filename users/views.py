@@ -71,6 +71,17 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(tokens, status=status.HTTP_201_CREATED)
 
+def payment_page(request):
+    if request.user.is_authenticated:
+        refresh = RefreshToken.for_user(request.user)
+        access_token = str(refresh.access_token)
+        context = {
+            'access_token': access_token,
+                }
+        return render(request, 'post_detail.html', context)
+    else:
+        return redirect('login')
+
 
 def verify_phone(request):
     if request.method == 'POST':

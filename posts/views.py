@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
 
+from posts.paginations import CustomPagination
 from posts.service import get_post_by_chapter
 from django.core.cache import cache
 
@@ -17,6 +18,11 @@ from posts.models import Post, Chapter, Subscription
 
 class PostListView(ListView):
     model = Post
+    paginate_by = 3  # Количество элементов на странице
+    paginator_class = CustomPagination  # Используем кастомный пагинатор
+
+    def get_paginator(self, queryset, per_page, orphans=0, allow_empty_first_page=True):
+        return self.paginator_class(queryset, per_page, orphans, allow_empty_first_page)
 
 
 class PostDetailView(DetailView):
