@@ -68,3 +68,4 @@ class Subscription(models.Model):
         return f"{self.subscriber.email} подписался на {self.author.email}"
 
 
+

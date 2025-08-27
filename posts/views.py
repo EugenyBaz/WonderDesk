@@ -17,7 +17,7 @@ from posts.models import Post, Subscription
 
 class PostListView(ListView):
     model = Post
-    paginate_by = 3  # Количество элементов на странице
+    paginate_by = 5# Количество элементов на странице
     paginator_class = CustomPagination  # Используем кастомный пагинатор
 
     def get_context_data(self, **kwargs):

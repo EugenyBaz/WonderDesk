@@ -62,14 +62,18 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [],  # Ваш путь к дополнительным шаблонам, если есть
+        'APP_DIRS': True,  # Поиск шаблонов внутри приложений включен
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {  #  Новая секция для кастомных фильтров
+                'custom_filters': 'posts.filters',  # Путь к вашему файлу фильтров
+            }
         },
     },
 ]
