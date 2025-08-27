@@ -111,24 +111,27 @@
 
             <div class="card">
 
-                {% if post.media_type == 'VIDEO' %}
-                    <video controls width="100%" height="200px">
-                        <source src="{{ post.file.url }}" type="video/mp4">
-                        Ваше устройство не поддерживает воспроизведение видео.
-                    </video>
-                    {% if post.premium and user.phone_number != post.author.phone_number %}
-                        <div class="overlay-blocker">
-                            <p>Данный контент доступен только подписчикам.</p>
-                        </div>
-                    {% endif %}
-                {% elif post.media_type == 'IMAGE' %}
-                    <img src="{{post.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ post.title }}">
-                    {% if post.premium and user.phone_number != post.author.phone_number %}
-                        <div class="overlay-blocker">
-                            <p>Данный контент доступен только подписчикам.</p>
-                        </div>
-                    {% endif %}
-                {% endif %}
+                {% with ex=extensions.post.id %}
+                        {% if ex == "mp4" %}
+                            <video controls width="100%" height="200px">
+                                <source src="{{ post.file.url }}" type="video/mp4">
+                                Ваше устройство не поддерживает воспроизведение видео.
+                            </video>
+                            {% if post.premium and user.phone_number != post.author.phone_number %}
+                                <div class="overlay-blocker">
+                                    <p>Данный контент доступен только подписчикам.</p>
+                                </div>
+                            {% endif %}
+
+                        {% elif ex in "jpg jpeg png gif" %}
+                            <img src="{{post.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ post.title }}">
+                            {% if post.premium and user.phone_number != post.author.phone_number %}
+                                <div class="overlay-blocker">
+                                    <p>Данный контент доступен только подписчикам.</p>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                {% endwith %}
                 <div class="card-body">
                     <h6 class="card-title">{{ post.title }}</h6>
                     <p class="card-text">{{ post.description | truncatechars:100 }}</p>

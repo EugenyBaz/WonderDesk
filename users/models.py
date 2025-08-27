@@ -50,13 +50,6 @@ class Payment(models.Model):
     payment_date = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата платежа"
     )
-    paid_chapter = models.ForeignKey(
-        "posts.Chapter",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name="Оплаченный курс/блок",
-    )
     paid_post = models.ForeignKey(
         "posts.Post",
         on_delete=models.SET_NULL,
@@ -68,7 +61,7 @@ class Payment(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Сумма оплаты"
     )
     method = models.CharField(
-        max_length=10,
+        max_length=50,
         choices=PAYMENT_METHODS,
         default="cash",
         verbose_name="Способ оплаты",

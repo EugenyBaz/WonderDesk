@@ -3,37 +3,20 @@ from django.db import models
 from users.models import User
 
 
-class Chapter(models.Model):
-    title = models.CharField(max_length=255, verbose_name = "Название главы" )
-    description = models.TextField(blank=True, verbose_name = "Описание главы")
-    cover_image = models.ImageField(upload_to='series_covers/', blank=True, null=True, verbose_name= "Изображение главы")
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "Автор главы" )
-
-    class Meta:
-        verbose_name = "Глава"
-        verbose_name_plural = "Главы"
-
-    def __str__(self):
-        return self.title
-
-
 class MediaType(models.TextChoices):
-    TEXT = 'TEXT', 'Текстовый пост'
     VIDEO = 'VIDEO', 'Видео'
     IMAGE = 'IMAGE', 'Изображение'
 
 
+
 class Post(models.Model):
-    series = models.ForeignKey(Chapter, related_name='chapter_posts', on_delete=models.SET_NULL, null=True, blank=True, verbose_name= "Глава")
     title = models.CharField(max_length=255, verbose_name = "Название поста" )
-    description = models.TextField(blank=True, verbose_name = "Описание поста" )
-    media_type = models.CharField(max_length=10, choices=MediaType.choices, default=MediaType.TEXT)
+    description = models.TextField(blank=True, verbose_name = "Содержание поста" )
     file = models.FileField(upload_to='uploads/%Y/%m/%d/', blank=True, null=True, verbose_name = "Медиафайлы" )  # Загрузка медиафайлов
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "Автор" )
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name = "Цена" )
     public = models.BooleanField(default=True, verbose_name = "Публикация" )  # Открытый доступ
     premium = models.BooleanField(default=False, verbose_name = "Платный материал" )  # Платный материал
-    sequence_order = models.PositiveIntegerField(null=True, blank=True)  # Порядок следования (для серий)
     view_count = models.PositiveIntegerField(default=0, verbose_name = "Счетчик просмотров" )  # Счётчик просмотров
     likes = models.ManyToManyField(User, through='Like', related_name='liked_posts', verbose_name = "Лайки" )  # Лайки
 
@@ -44,9 +27,6 @@ class Post(models.Model):
     class Meta:
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
-
-    def __str__(self):
-        return self.title
 
 
 class Like(models.Model):

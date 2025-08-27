@@ -1,7 +1,10 @@
-from django.forms import ModelForm, BooleanField
+from django import forms
+from django.core.files.uploadedfile import UploadedFile
+from django.forms import ModelForm, BooleanField, ClearableFileInput
 from django.core.exceptions import ValidationError
 from posts.constants import FORBIDDEN_WORDS
 from posts.models import Post
+import os
 
 forbidden_list = FORBIDDEN_WORDS
 
@@ -9,38 +12,52 @@ forbidden_list = FORBIDDEN_WORDS
 class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name, fild in self.fields.items():
-            if isinstance(fild, BooleanField):
-                fild.widget.attrs["class"] = "form-check-input"
+        for field_name, field in self.fields.items():
+            if isinstance(field, BooleanField):
+                field.widget.attrs["class"] = "form-check-input"
             else:
-                fild.widget.attrs["class"] = "form-control"
+                field.widget.attrs["class"] = "form-control"
+
 
 
 class PostForm(StyleFormMixin, ModelForm):
+
     class Meta:
         model = Post
-        exclude = ()
+        fields = ['title', 'description', 'file', 'premium', 'price']
+        exclude = ('author', 'public', 'sequence_order', 'view_count', 'likes')  # Скрываем ненужные поля
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         instance = kwargs.get("instance")
 
-        if instance is not None and not (user.has_perm("posts.can_unpublish_post") or instance.author == user):
+
+        if instance is not None and not (self.user.has_perm("posts.can_unpublish_post") or instance.author == self.user):
             self.Meta.exclude = ("public",)  # Исключаем поле "public"
         else:
             self.Meta.fields = "__all__"
 
-    def clean_name(self):
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        obj.author = self.user  # Устанавливаем текущего пользователя автором
+        obj.public = True  # Публикуем запись автоматически
+        if commit:
+            obj.save()
+        return obj
+
+
+
+    def clean_title(self):
 
         cleaned_data = super().clean()
-        name = cleaned_data.get("name").strip().lower()
+        name = cleaned_data.get("title").strip().lower()
         words_in_name = name.split()
 
         for word in words_in_name:
             if word in FORBIDDEN_WORDS:
                 raise ValidationError(f"Введено  недопустимое  слово '{word}'.")
-        return cleaned_data.get("name")
+        return cleaned_data.get("title")
 
     def clean_description(self):
 
@@ -62,3 +79,4 @@ class PostForm(StyleFormMixin, ModelForm):
         if price < 0:
             raise ValidationError(f"Цена не может быть отрицательной.")
         return price
+

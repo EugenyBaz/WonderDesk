@@ -4,7 +4,6 @@ from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
 
 from posts.paginations import CustomPagination
-from posts.service import get_post_by_chapter
 from django.core.cache import cache
 
 from django.shortcuts import get_object_or_404
@@ -13,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden
 
 from posts.forms import PostForm
-from posts.models import Post, Chapter, Subscription
+from posts.models import Post, Subscription
 
 
 class PostListView(ListView):
@@ -21,12 +20,29 @@ class PostListView(ListView):
     paginate_by = 3  # Количество элементов на странице
     paginator_class = CustomPagination  # Используем кастомный пагинатор
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Получаем список объектов и проходим по ним, создавая расширения
+        extensions = {}
+        for obj in context['object_list']:
+            extensions[obj.id] = obj.file.name.split('.')[-1]
+        context['extensions'] = extensions
+        return context
+
     def get_paginator(self, queryset, per_page, orphans=0, allow_empty_first_page=True):
         return self.paginator_class(queryset, per_page, orphans, allow_empty_first_page)
 
 
 class PostDetailView(DetailView):
     model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        obj = self.get_object()
+        context['ex'] = obj.file.name.split('.')[-1]
+        return context
+
 
 
 def contacts(request):
@@ -37,11 +53,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
+        return kwargs
+
     def form_valid(self, form):
-        post = form.save()
-        user = self.request.user
-        post.author = user
-        post.save()
+        form.instance.author = self.request.user  # Устанавливаем текущего пользователя как автора
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -99,33 +117,20 @@ class UnpublishPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse_lazy("posts:post_detail", kwargs={"pk": self.object.pk})
 
 
-class PostByChapterView(ListView):
-    model = Post
-    template_name = "posts/posts_by_chapter.html"  # отдельный шаблон для вывода постов по главам
-
-    def get_queryset(self):
-        chapter_id = self.kwargs.get("chapter_id")
-        return get_post_by_chapter(chapter_id)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        chapter_id = self.kwargs.get("chapter_id")
-        context["current_chapter"] = Chapter.objects.get(pk=chapter_id)
-        return context
-
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-
+    file_extentions = post.file.name.split('.')[-1]
+    print("DEBUG",file_extentions)
     # Бесплатные посты видны всем
     if not post.premium:
-        return render(request, "posts:post_detail", {'post': post})
+        return render(request, "posts:post_detail", {'post': post, "ex": file_extentions})
 
     # Платные посты видим только подписанным пользователям
     try:
         subscription = Subscription.objects.get(user=request.user)
         if subscription.active:
-            return render(request, "posts:post_detail", {'post': post})
+            return render(request, "posts:post_detail", {'post': post, "ex": file_extentions})
         else:
             return redirect('/subscribe/')
     except Subscription.DoesNotExist:
@@ -133,7 +138,9 @@ def post_detail(request, pk):
 
 def post_detail_check(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    file_extentions = post.file.name.split('.')[-1]
     file_contents = ""
     if post.file:
         file_contents = mark_safe(post.file.read())
-    return render(request, "posts:post_detail", {'post': post, 'file_contents': file_contents})
+    return render(request, "posts:post_detail", {'post': post, 'file_contents': file_contents, "ex": file_extentions})
+

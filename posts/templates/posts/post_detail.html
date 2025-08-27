@@ -54,12 +54,12 @@
 
         <div class="col">
             <div class="card" style="width: 25rem; height: 33rem;">
-                {% if post.media_type == 'VIDEO' %}
+                {% if ex == "mp4" %}
                     <video controls width="50%" height="auto">
                         <source src="{{ post.file.url }}" type="video/mp4">
                         Ваше устройство не поддерживает воспроизведение видео.
                     </video>
-                {% elif post.media_type == 'IMAGE' %}
+                {% elif ex in "jpg jpeg png gif" %}
                     <img src="{{post.file | media_filter}}" class="card-img-center" style="height: 250px; object-fit: contain;" alt="{{ post.title }}">
                 {% endif %}
 
@@ -76,7 +76,7 @@
                     {% if request.user == post.author or perms.posts.can_delete_any_post %}
                         <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_delete' post.id %}">Удалить</a>
                     {% endif %}
-                    <a class="p-2 btn btn-outline-primary" href="/">Назад</a>
+                    <a class="p-2 btn btn-outline-primary" href="/">В раздел Публикации</a>
                     <!-- Наложение замка -->
                     {% if post.premium and user.phone_number != post.author.phone_number %}
                         <div class="overlay-blocker">
