@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_page
 from posts.apps import PostsConfig
 from posts.views import PostListView, contacts, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
 
+
 app_name = PostsConfig.name
 
 

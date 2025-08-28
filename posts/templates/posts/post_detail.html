@@ -83,11 +83,10 @@
                             <i class="fas fa-lock fa-3x"></i>
                             <p>Данный контент доступен только подписчикам.</p>
                             {% if request.user.is_authenticated %}
-                                <form id="payment-form" action="{% url 'users:payments_create' %}" method="post">
+                                <form action="{% url 'users:payment_api' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" name="paid_post" value="{{ post.id }}">
-                                    <input type="hidden" name="amount" value="{{ post.price }}">
-                                    <input type="hidden" name="Authorization" value="Bearer {{ access_token }}">
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                    <input type="hidden" name="user_id" value="{{ request.user.id }}">
                                     <button type="submit" class="btn btn-outline-primary">Оплатить подписку</button>
                                 </form>
                             {% endif %}

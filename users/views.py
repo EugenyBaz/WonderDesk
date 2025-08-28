@@ -12,7 +12,10 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from posts.models import Post
 from users.forms import UserRegisterForm, VerificationCodeForm
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer
@@ -20,6 +23,16 @@ from users.services import create_stripe_price, create_stripe_session, create_st
 from users.utils import generate_verification_code, send_sms
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.conf import settings
+import logging
+
+# Настройка логгера
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+from django.contrib.auth.decorators import login_required
 
 
 class UserCreateView(SuccessMessageMixin,CreateView):
@@ -135,27 +148,106 @@ class PaymentListView(generics.ListAPIView):
     ordering_fields = ["payment_date"]
 
 
+# class PaymentApiView(APIView):
+#
+#     def post(self, request):
+#         print("Request Data:", request.data)
+#         post_id = request.data.get("post_id")  # Получаем ID поста из тела запроса
+#         user_id = request.data.get("user_id")  # Получаем ID пользователя из тела запроса
+#
+#         try:
+#             user = User.objects.get(pk=user_id)
+#             paid_post = Post.objects.get(pk=post_id)
+#         except (User.DoesNotExist, Post.DoesNotExist):
+#             return Response({'error': 'Пользователь или пост не найдены'}, status=404)
+#
+#         # Создаем продукт и цену в Stripe
+#         post_id = create_stripe_product(paid_post.title)
+#         amount_in_rub = paid_post.price
+#         price = create_stripe_price(post_id, amount_in_rub)
+#         session_id, payment_link = create_stripe_session(price)
+#
+#         # Создаем запись о платеже
+#         payment = Payment.objects.create(
+#             user=user,
+#             paid_post=paid_post,
+#             amount=amount_in_rub,
+#             method="transfer",
+#             stripe_payment_id=session_id,
+#             link_payment=payment_link
+#         )
+#
+#         # Отправляем клиенту ссылку на оплату
+#         return Response({
+#             'redirect_url': payment_link
+#         }, status=201)
+    #как передать из detail страницы продукта user_id и post_id
 
-class PaymentCreateAPIView(CreateAPIView):
-    serializer_class = PaymentSerializer
-    queryset = Payment.objects.all()
-    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
 
-        payment = serializer.save(user=self.request.user)
 
-        # if payment.paid_chapter is None:
-        #     raise ValidationError("Необходимо выбрать пост для оплаты.")
 
-        # Проверь, что paid_post не равен None
-        if payment.paid_post is None:
-            raise ValidationError("Пост не найден.")
 
-        post_id = create_stripe_product(payment.paid_post.title)
-        amount_in_rub = payment.amount
+# class PaymentCreateAPIView(CreateAPIView):
+#     serializer_class = PaymentSerializer
+#     queryset = Payment.objects.all()
+#     permission_classes = [IsAuthenticated]
+#
+#     def perform_create(self, serializer):
+#         try:
+#             payment = serializer.save(user=self.request.user)
+#
+#             if payment.paid_post is None:
+#                 raise ValidationError("Пост не найден.")
+#
+#             post_id = create_stripe_product(payment.paid_post.title)
+#             amount_in_rub = payment.amount
+#             price = create_stripe_price(post_id, amount_in_rub)
+#             session_id, payment_link = create_stripe_session(price)
+#             payment.stripe_payment_id = session_id
+#             payment.link_payment = payment_link
+#             payment.save()
+#
+#             # Перенаправляем пользователя на страницу оплаты
+#             return HttpResponseRedirect(payment_link)
+#         except ValidationError as e:
+#             # Логирование ошибки
+#             logger.error(f"Ошибка при создании платежа: {e}")
+#             raise  # Повторно поднимаем исключение
+#         except Exception as e:
+#             # Логирование ошибки
+#             logger.error(f"Ошибка при создании платежа: {e}")
+#             raise e  # Повторно поднимаем исключение
+
+@login_required
+def payment_api_view(request):
+    if request.method == 'POST':
+        post_id = request.POST.get("post_id")
+        user_id = request.POST.get("user_id")
+
+        try:
+            user = request.user  # Используем текущего пользователя
+            paid_post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return render(request, 'users/error.html', {"message": "Пост не найден"})
+
+        # Создаем продукт и цену в Stripe
+        post_id = create_stripe_product(paid_post.title)
+        amount_in_rub = paid_post.price
         price = create_stripe_price(post_id, amount_in_rub)
         session_id, payment_link = create_stripe_session(price)
-        payment.stripe_payment_id = session_id
-        payment.link_payment = payment_link
-        payment.save()
+
+        # Создаем запись о платеже
+        payment = Payment.objects.create(
+            user=user,
+            paid_post=paid_post,
+            amount=amount_in_rub,
+            method="transfer",
+            stripe_payment_id=session_id,
+            link_payment=payment_link
+        )
+
+        # Выполняем редирект на страницу оплаты
+        return redirect(payment_link)
+
+    return render(request, 'posts/post_list.html')

@@ -7,7 +7,7 @@ from users.apps import UsersConfig
 from django.urls import path, include
 
 from users.views import UserCreateView, verify_phone, UserViewSet, CustomLogoutView, PaymentListView, \
-    PaymentCreateAPIView
+    payment_api_view
 from users.views import payment_page
 
 router = SimpleRouter()
@@ -25,5 +25,7 @@ urlpatterns = [
     path('payment/', payment_page, name='payment_page'),
     path('api/', include(router.urls)),
     path("payments/", PaymentListView.as_view(), name="payment_list"),
-    path("payments_create/", PaymentCreateAPIView.as_view(), name="payments_create"),
+    path("payment_api/", payment_api_view, name="payment_api"),
+    path('api/', include(router.urls)),
+    # path("payments_create/", PaymentCreateAPIView.as_view(), name="payments_create"),
 ]
