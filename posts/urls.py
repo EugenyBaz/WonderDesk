@@ -4,8 +4,8 @@ from django.urls import path
 from django.views.decorators.cache import cache_page
 
 from posts.apps import PostsConfig
-from posts.views import PostListView, contacts, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
-
+from posts.views import PostListView, contacts, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, \
+    SearchResultsView
 
 app_name = PostsConfig.name
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path("create_post/", PostCreateView.as_view(), name="post_create"),
     path("<int:pk>/update/", PostUpdateView.as_view(), name="post_update"),
     path("<int:pk>/delete/", PostDeleteView.as_view(), name="post_delete"),
+    path('search/', SearchResultsView.as_view(), name='search_results'),
     # path("post/chapter/<slug:chapter_slug>/", PostListView.as_view(), name="product_list_by_category"),
 ]
 

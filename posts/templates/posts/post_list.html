@@ -88,14 +88,36 @@
             visibility: hidden;   /* Прячем само видео, оставляя только превью */
         }
 
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-left: 20%; /* Сдвиг на 70% от ширины экрана */
+        }
+
+        #search-button {
+            font-size: 14px; /* Размер шрифта */
+            border-color: #007bff;
+        }
+
+        #search-input {
+            padding: 8px; /* Немного увеличим отступ внутри поля */
+            color: #007bff
+            border-radius: 4px; /* Скруглим углы */
+            font-size: 14px; /* Размер шрифта */
+            margin-right: 8px; /* Небольшой отступ справа */
+        }
+
 
 
     </style>
 </head>
 
 <div class="search-container">
-    <input type="text" placeholder="В разработке..." id="search-input">
-    <button type="button" id="search-button">Искать</button>
+    <form method="get" action="{% url 'posts:search_results' %}">
+        <input type="text" name="q" placeholder="Поиск по названию и описанию.." id="search-input">
+        <button type="submit" class="btn btn-primary" id="search-button">Искать</button>
 </div>
 
 <div class="d-flex justify-content-center mb-3">
@@ -117,7 +139,7 @@
                                 <source src="{{ post.file.url }}" type="video/mp4">
                                 Ваше устройство не поддерживает воспроизведение видео.
                             </video>
-                            {% if post.premium and user.phone_number != post.author.phone_number %}
+                            {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
                                 <div class="overlay-blocker">
                                     <p>Данный контент доступен только подписчикам.</p>
                                 </div>
@@ -125,7 +147,7 @@
 
                         {% elif extension in 'jpg,jpeg,png,gif' %}
                             <img src="{{post.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ post.title }}">
-                            {% if post.premium and user.phone_number != post.author.phone_number %}
+                            {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
                                 <div class="overlay-blocker">
                                     <p>Данный контент доступен только подписчикам.</p>
                                 </div>

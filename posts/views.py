@@ -7,7 +7,7 @@ from posts.paginations import CustomPagination
 from django.core.cache import cache
 
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden
 
@@ -144,3 +144,19 @@ def post_detail_check(request, pk):
         file_contents = mark_safe(post.file.read())
     return render(request, "posts:post_detail", {'post': post, 'file_contents': file_contents, "ex": file_extentions})
 
+class SearchResultsView(TemplateView):
+    template_name = 'posts/search_results.html'
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '').strip()  # Получаем запрос и очищаем пробелы
+
+        if query:
+            # Производим поиск по названию и описанию
+            title_query = Post.objects.filter(title__icontains=query)
+            desc_query = Post.objects.filter(description__icontains=query)
+            results = title_query.union(desc_query)
+        else:
+            # Если запрос пустой, возвращаем пустую коллекцию
+            results = Post.objects.none()
+
+        return render(request, self.template_name, {'results': results, 'query': query})

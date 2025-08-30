@@ -50,12 +50,12 @@ class Payment(models.Model):
     payment_date = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата платежа"
     )
-    paid_post = models.ForeignKey(
-        "posts.Post",
+    paid_subscription= models.ForeignKey(
+        "posts.Subscription",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="Отдельно оплаченный пост",
+        verbose_name="Оплата подписки",
     )
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Сумма оплаты"

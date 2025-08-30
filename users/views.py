@@ -1,3 +1,4 @@
+import stripe
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
@@ -15,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from posts.models import Post
+from posts.models import Post, Subscription
 from users.forms import UserRegisterForm, VerificationCodeForm
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer
@@ -148,106 +149,67 @@ class PaymentListView(generics.ListAPIView):
     ordering_fields = ["payment_date"]
 
 
-# class PaymentApiView(APIView):
-#
-#     def post(self, request):
-#         print("Request Data:", request.data)
-#         post_id = request.data.get("post_id")  # Получаем ID поста из тела запроса
-#         user_id = request.data.get("user_id")  # Получаем ID пользователя из тела запроса
-#
-#         try:
-#             user = User.objects.get(pk=user_id)
-#             paid_post = Post.objects.get(pk=post_id)
-#         except (User.DoesNotExist, Post.DoesNotExist):
-#             return Response({'error': 'Пользователь или пост не найдены'}, status=404)
-#
-#         # Создаем продукт и цену в Stripe
-#         post_id = create_stripe_product(paid_post.title)
-#         amount_in_rub = paid_post.price
-#         price = create_stripe_price(post_id, amount_in_rub)
-#         session_id, payment_link = create_stripe_session(price)
-#
-#         # Создаем запись о платеже
-#         payment = Payment.objects.create(
-#             user=user,
-#             paid_post=paid_post,
-#             amount=amount_in_rub,
-#             method="transfer",
-#             stripe_payment_id=session_id,
-#             link_payment=payment_link
-#         )
-#
-#         # Отправляем клиенту ссылку на оплату
-#         return Response({
-#             'redirect_url': payment_link
-#         }, status=201)
-    #как передать из detail страницы продукта user_id и post_id
-
-
-
-
-
-
-# class PaymentCreateAPIView(CreateAPIView):
-#     serializer_class = PaymentSerializer
-#     queryset = Payment.objects.all()
-#     permission_classes = [IsAuthenticated]
-#
-#     def perform_create(self, serializer):
-#         try:
-#             payment = serializer.save(user=self.request.user)
-#
-#             if payment.paid_post is None:
-#                 raise ValidationError("Пост не найден.")
-#
-#             post_id = create_stripe_product(payment.paid_post.title)
-#             amount_in_rub = payment.amount
-#             price = create_stripe_price(post_id, amount_in_rub)
-#             session_id, payment_link = create_stripe_session(price)
-#             payment.stripe_payment_id = session_id
-#             payment.link_payment = payment_link
-#             payment.save()
-#
-#             # Перенаправляем пользователя на страницу оплаты
-#             return HttpResponseRedirect(payment_link)
-#         except ValidationError as e:
-#             # Логирование ошибки
-#             logger.error(f"Ошибка при создании платежа: {e}")
-#             raise  # Повторно поднимаем исключение
-#         except Exception as e:
-#             # Логирование ошибки
-#             logger.error(f"Ошибка при создании платежа: {e}")
-#             raise e  # Повторно поднимаем исключение
-
 @login_required
 def payment_api_view(request):
     if request.method == 'POST':
-        post_id = request.POST.get("post_id")
-        user_id = request.POST.get("user_id")
 
         try:
-            user = request.user  # Используем текущего пользователя
-            paid_post = Post.objects.get(pk=post_id)
-        except Post.DoesNotExist:
-            return render(request, 'users/error.html', {"message": "Пост не найден"})
+            subscription = Subscription.objects.get(user=request.user)
+        except Subscription.DoesNotExist:
+
+            subscription = Subscription.objects.create(
+                user=request.user,
+                subscription_level='SINGLE',
+                price=100.00  # или любая другая сумма
+            )
+            subscription.set_end_date()  # Устанавливаем конец подписки
+            subscription.save()
+
+            # return render(request, 'users/error.html', {"message": "Подписка не найдена"})
 
         # Создаем продукт и цену в Stripe
-        post_id = create_stripe_product(paid_post.title)
-        amount_in_rub = paid_post.price
+        post_id = create_stripe_product(subscription.subscription_level)
+        amount_in_rub = subscription.price
         price = create_stripe_price(post_id, amount_in_rub)
         session_id, payment_link = create_stripe_session(price)
 
         # Создаем запись о платеже
         payment = Payment.objects.create(
-            user=user,
-            paid_post=paid_post,
+            user=request.user,
+            paid_subscription=subscription,
             amount=amount_in_rub,
             method="transfer",
             stripe_payment_id=session_id,
             link_payment=payment_link
         )
+        subscription.active = True
+        subscription.save()
 
         # Выполняем редирект на страницу оплаты
         return redirect(payment_link)
 
-    return render(request, 'posts/post_list.html')
+    return render(request, 'posts/post_detail.html')
+
+
+
+@login_required
+def payment_success(request):
+    session_id = request.GET.get('session_id')
+    try:
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+        current_user = request.user
+        if checkout_session.payment_status == 'paid':
+            current_user.subscription_status = True
+            current_user.save()
+            messages.success(request, 'Оплата успешно произведена!')
+        else:
+            messages.warning(request, 'Платеж пока не подтвержден.')
+
+        # Предполагаем, что идентификатор поста сохранён в метаданных Stripe-сессии
+        post_pk = checkout_session.metadata.get('post_id')
+        return redirect('posts:post_detail', pk=post_pk)
+    except Exception as e:
+        messages.error(request, f'Ошибка обработки платежа: {e}')
+        return redirect('posts:post_detail')
+
+logger = logging.getLogger(__name__)

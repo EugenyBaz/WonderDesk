@@ -24,7 +24,7 @@ class PostForm(StyleFormMixin, ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'description', 'file', 'premium', 'price']
+        fields = ['title', 'description', 'file', 'premium']
         exclude = ('author', 'public', 'sequence_order', 'view_count', 'likes')  # Скрываем ненужные поля
 
     def __init__(self, *args, **kwargs):
