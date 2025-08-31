@@ -11,7 +11,7 @@ def create_stripe_product(product_name):
     Возвращает ID продукта.
     """
     try:
-        product = stripe.Product.create(name=product_name, description= "Оплата подписки.")
+        product = stripe.Product.create(name=product_name, description="Оплата подписки.")
         return product.id
     except Exception as e:
         print(f"Ошибка при создании продукта: {e}")
@@ -24,7 +24,7 @@ def create_stripe_price(product_id, amount):
     return stripe.Price.create(
         currency="rub",
         unit_amount=int(amount * 100),
-        product= product_id,
+        product=product_id,
     )
 
 

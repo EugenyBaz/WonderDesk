@@ -98,7 +98,9 @@
                         {% with extension=result.file.name|file_extension %}
                              {% if extension in 'mp4,mkv,avi' %}
                                 <video controls width="100%" height="200px">
-                                    <source src="{{ result.file.url }}" type="video/mp4">
+                                    {% if post.file %}
+                                        <source src="{{ post.file.url }}" type="video/mp4">
+                                    {% endif %}
                                     Ваше устройство не поддерживает воспроизведение видео.
                                 </video>
                                 {% if result.premium %}

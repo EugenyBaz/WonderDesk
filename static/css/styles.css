@@ -1,7 +1,13 @@
+.container {
+    max-width: 1400px; /* Фиксированная ширина */
+    margin: 0 auto; /* Центрирование по горизонтали */
+    padding: 10px; /* Отступы */
+}
+
 /* Логотип в круге с цветом primary */
 .logo {
     font-family: 'Imprint MT Shadow', cursive;
-    font-size: 36px;
+    font-size: 32px;
     color: #007bff; /* Цвет текста primary */
     background-color: #212529; /* Тёмный фон внутри круга */
     border-radius: 50%; /* Круглая форма */
@@ -12,6 +18,7 @@
     line-height: 100px; /* Центровка текста по вертикали */
     text-align: center; /* Центровка текста по горизонтали */
     border: 2px solid #007bff; /* Обрамление primary */
+    display: flex; /* Используем flexbox для центрирования */
     justify-content: center; /* Центровка по горизонтали */
     align-items: center; /* Центровка по вертикали */
     margin-left: 0;

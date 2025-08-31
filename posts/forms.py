@@ -1,10 +1,7 @@
-from django import forms
-from django.core.files.uploadedfile import UploadedFile
-from django.forms import ModelForm, BooleanField, ClearableFileInput
 from django.core.exceptions import ValidationError
+from django.forms import BooleanField, ModelForm
 from posts.constants import FORBIDDEN_WORDS
 from posts.models import Post
-import os
 
 forbidden_list = FORBIDDEN_WORDS
 
@@ -19,21 +16,21 @@ class StyleFormMixin:
                 field.widget.attrs["class"] = "form-control"
 
 
-
 class PostForm(StyleFormMixin, ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'description', 'file', 'premium']
-        exclude = ('author', 'public', 'sequence_order', 'view_count', 'likes')  # Скрываем ненужные поля
+        fields = ["title", "description", "file", "premium"]
+        exclude = ("author", "public", "sequence_order", "view_count", "likes")  # Скрываем ненужные поля
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         instance = kwargs.get("instance")
 
-
-        if instance is not None and not (self.user.has_perm("posts.can_unpublish_post") or instance.author == self.user):
+        if instance is not None and not (
+            self.user.has_perm("posts.can_unpublish_post") or instance.author == self.user
+        ):
             self.Meta.exclude = ("public",)  # Исключаем поле "public"
         else:
             self.Meta.fields = "__all__"
@@ -45,8 +42,6 @@ class PostForm(StyleFormMixin, ModelForm):
         if commit:
             obj.save()
         return obj
-
-
 
     def clean_title(self):
 
@@ -77,6 +72,5 @@ class PostForm(StyleFormMixin, ModelForm):
         price = float(data)
 
         if price < 0:
-            raise ValidationError(f"Цена не может быть отрицательной.")
+            raise ValidationError("Цена не может быть отрицательной.")
         return price
-

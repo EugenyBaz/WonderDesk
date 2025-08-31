@@ -56,7 +56,9 @@
             <div class="card" style="width: 25rem; height: 33rem;">
                 {% if ex == "mp4" %}
                     <video controls width="50%" height="auto">
-                        <source src="{{ post.file.url }}" type="video/mp4">
+                        {% if post.file %}
+                            <source src="{{ post.file.url }}" type="video/mp4">
+                        {% endif %}
                         Ваше устройство не поддерживает воспроизведение видео.
                     </video>
                 {% elif ex in "jpg jpeg png gif" %}

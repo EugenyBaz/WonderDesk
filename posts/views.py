@@ -1,32 +1,30 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
-
-from posts.paginations import CustomPagination
-from django.core.cache import cache
-
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseForbidden
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from posts.forms import PostForm
 from posts.models import Post, Subscription
+from posts.paginations import CustomPagination
 
 
 class PostListView(ListView):
     model = Post
-    paginate_by = 5# Количество элементов на странице
+    paginate_by = 5  # Количество элементов на странице
     paginator_class = CustomPagination  # Используем кастомный пагинатор
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Получаем список объектов и проходим по ним, создавая расширения
         extensions = {}
-        for obj in context['object_list']:
-            extensions[obj.id] = obj.file.name.split('.')[-1]
-        context['extensions'] = extensions
+        for obj in context["object_list"]:
+            if obj.file:
+                extensions[obj.id] = obj.file.name.split(".")[-1]
+            else:
+                extensions[obj.id] = "unknown"  # Значение по умолчанию
+        context["extensions"] = extensions
         return context
 
     def get_paginator(self, queryset, per_page, orphans=0, allow_empty_first_page=True):
@@ -40,9 +38,8 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         obj = self.get_object()
-        context['ex'] = obj.file.name.split('.')[-1]
+        context["ex"] = obj.file.name.split(".")[-1]
         return context
-
 
 
 def contacts(request):
@@ -55,7 +52,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
+        kwargs["user"] = self.request.user  # Передаем текущего пользователя в форму
         return kwargs
 
     def form_valid(self, form):
@@ -117,38 +114,39 @@ class UnpublishPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse_lazy("posts:post_detail", kwargs={"pk": self.object.pk})
 
 
-
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    file_extentions = post.file.name.split('.')[-1]
-    print("DEBUG",file_extentions)
+    file_extentions = post.file.name.split(".")[-1]
+    print("DEBUG", file_extentions)
     # Бесплатные посты видны всем
     if not post.premium:
-        return render(request, "posts:post_detail", {'post': post, "ex": file_extentions})
+        return render(request, "posts:post_detail", {"post": post, "ex": file_extentions})
 
     # Платные посты видим только подписанным пользователям
     try:
         subscription = Subscription.objects.get(user=request.user)
         if subscription.active:
-            return render(request, "posts:post_detail", {'post': post, "ex": file_extentions})
+            return render(request, "posts:post_detail", {"post": post, "ex": file_extentions})
         else:
-            return redirect('/subscribe/')
+            return redirect("/subscribe/")
     except Subscription.DoesNotExist:
-        return redirect('/subscribe/')
+        return redirect("/subscribe/")
+
 
 def post_detail_check(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    file_extentions = post.file.name.split('.')[-1]
+    file_extentions = post.file.name.split(".")[-1]
     file_contents = ""
     if post.file:
         file_contents = mark_safe(post.file.read())
-    return render(request, "posts:post_detail", {'post': post, 'file_contents': file_contents, "ex": file_extentions})
+    return render(request, "posts:post_detail", {"post": post, "file_contents": file_contents, "ex": file_extentions})
+
 
 class SearchResultsView(TemplateView):
-    template_name = 'posts/search_results.html'
+    template_name = "posts/search_results.html"
 
     def get(self, request, *args, **kwargs):
-        query = request.GET.get('q', '').strip()  # Получаем запрос и очищаем пробелы
+        query = request.GET.get("q", "").strip()  # Получаем запрос и очищаем пробелы
 
         if query:
             # Производим поиск по названию и описанию
@@ -160,10 +158,9 @@ class SearchResultsView(TemplateView):
             results = Post.objects.none()
 
         context = {
-            'results': results,
-            'query': query,
-            'user': request.user,  # Добавляем текущего пользователя
+            "results": results,
+            "query": query,
+            "user": request.user,  # Добавляем текущего пользователя
         }
-
 
         return render(request, self.template_name, context)

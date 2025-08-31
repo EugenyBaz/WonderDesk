@@ -17,22 +17,29 @@ nav a:hover {
 
 /* Удобочитаемость email адреса */
 .text-primary {
-    font-size: 0.9em;
+    font-size: 1em;
     opacity: 0.8;
+    margin-left: 10px
 }
 
-/* Логотип */
-.logo {
-    font-size: 2em;
-    color: #007bff;
+
+/* Навигационная панель */
+nav {
+    display: flex;
+    align-items: center;
+    margin-left: 0; /* Отступ слева */
 }
+
+
+
+
+
 </style>
 
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 dark-theme border-bottom box-shadow">
-     <h5 class="my-0 mr-md-auto font-weight-normal logo">WD</h5>
+    <h5 class="my-0 logo">WD</h5>
 
-
-    <nav class="ms-5">
+    <nav class="justify-content-start">
         <a class="p-2 btn btn-outline-primary" href="/">Публикации</a>
         <a class="p-2 btn btn-outline-primary" href="/contacts/">Контакты</a>
         <a class="p-2 btn btn-outline-primary" href="/blog/">Блог</a>
@@ -45,5 +52,4 @@ nav a:hover {
         {% endif %}
         <span class="text-right text-primary ">{{ user.email }}</span>
     </nav>
-
 </div>
