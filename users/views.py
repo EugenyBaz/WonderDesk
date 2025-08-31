@@ -1,10 +1,11 @@
 import stripe
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, FormView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
@@ -15,9 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from posts.models import Post, Subscription
-from users.forms import UserRegisterForm, VerificationCodeForm
+from users.forms import UserRegisterForm, VerificationCodeForm, UserProfileForm
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer
 from users.services import create_stripe_price, create_stripe_session, create_stripe_product
@@ -213,3 +213,23 @@ def payment_success(request):
         return redirect('posts:post_detail')
 
 logger = logging.getLogger(__name__)
+
+class CabinetView(LoginRequiredMixin, FormView):
+    template_name = 'users/cabinet.html'
+    form_class = UserProfileForm
+    success_url = reverse_lazy("users:cabinet")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['email'] = self.request.user.email
+        initial['country'] = self.request.user.country
+        return initial
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.email = form.cleaned_data['email']
+        user.country = form.cleaned_data['country']
+        user.save()
+        return super().form_valid(form)
+
+

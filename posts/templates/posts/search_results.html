@@ -51,6 +51,33 @@
         font-size: 0.7rem; /* Уменьшаем шрифт */
     }
 
+            .overlay-blocker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.7); /* Прозрачный фон */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000; /* Важно для перекрытия основного контента */
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%; /* Ширина равна ширине мультимедийного элемента */
+            height: 70%; /* Высота равна высоте мультимедийного элемента */
+        }
+
+        .card img, .card video { /* Для видео и изображений */
+            position: relative; /* Нужна позиция relative, чтобы overlay находился относительно них */
+        }
+        .video-disabled video {
+            pointer-events: none; /* Запрещаем взаимодействие с элементами видео */
+            visibility: hidden;   /* Прячем само видео, оставляя только превью */
+        }
+
 
 </style>
 
@@ -74,16 +101,18 @@
                                     <source src="{{ result.file.url }}" type="video/mp4">
                                     Ваше устройство не поддерживает воспроизведение видео.
                                 </video>
-                                {% if result.premium and user.phone_number != result.author.phone_number and not request.user.subscriptions.exists %}
+                                {% if result.premium %}
                                     <div class="overlay-blocker">
+                                        <i class="fas fa-lock fa-3x"></i>
                                         <p>Данный контент доступен только подписчикам.</p>
                                     </div>
                                 {% endif %}
 
                             {% elif extension in 'jpg,jpeg,png,gif' %}
                                 <img src="{{result.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ result.title }}">
-                                {% if result.premium and user.phone_number != result.author.phone_number and not request.user.subscriptions.exists %}
+                                {% if result.premium %}
                                     <div class="overlay-blocker">
+                                        <i class="fas fa-lock fa-3x"></i>
                                         <p>Данный контент доступен только подписчикам.</p>
                                     </div>
                                 {% endif %}

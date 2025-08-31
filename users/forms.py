@@ -39,3 +39,7 @@ class VerificationCodeForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": "Введите код"}),
         label="Код подтверждения"
     )
+class UserProfileForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['avatar', 'email', 'country']

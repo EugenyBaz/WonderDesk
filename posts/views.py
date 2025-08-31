@@ -159,4 +159,11 @@ class SearchResultsView(TemplateView):
             # Если запрос пустой, возвращаем пустую коллекцию
             results = Post.objects.none()
 
-        return render(request, self.template_name, {'results': results, 'query': query})
+        context = {
+            'results': results,
+            'query': query,
+            'user': request.user,  # Добавляем текущего пользователя
+        }
+
+
+        return render(request, self.template_name, context)

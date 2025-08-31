@@ -78,7 +78,7 @@
 
                         <!-- Отображение полного поста -->
                         {% if post.author == request.user or request.user.subscriptions.exists %}
-                            <p>{{ post.description|linebreaksbr }}</p>
+<!--                            <p>{{ post.description|linebreaksbr }}</p>-->
                         {% elif post.premium %}
                             <!-- Для незарегистрированных пользователей или тех, кто не заплатил -->
                             <div class="overlay-blocker">
@@ -93,13 +93,6 @@
                                     </form>
                                 {% endif %}
                             </div>
-                        {% else %}
-                            <!-- Бесплатный публичный контент -->
-                            <h2>{{ post.title }}</h2>
-                            <p>{{ post.description|linebreaksbr }}</p>
-                            {% if post.file %}
-                                <img src="{{ post.file.url }}" alt="Пост" style="max-width: 100%; height: auto;" />
-                            {% endif %}
                         {% endif %}
                     </div>
             </div>

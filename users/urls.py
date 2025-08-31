@@ -7,7 +7,7 @@ from users.apps import UsersConfig
 from django.urls import path, include
 
 from users.views import UserCreateView, verify_phone, UserViewSet, CustomLogoutView, PaymentListView, \
-    payment_api_view, payment_success
+    payment_api_view, payment_success, CabinetView
 from users.views import payment_page
 
 router = SimpleRouter()
@@ -19,6 +19,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(template_name="users/login.html"), name="login"),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("register/", UserCreateView.as_view(), name="register"),
+    path("cabinet/", CabinetView.as_view(), name="cabinet"),
     path("verify-phone/",verify_phone, name="verify-phone"),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
