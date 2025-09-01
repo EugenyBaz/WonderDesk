@@ -20,7 +20,6 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -193,10 +192,10 @@ CACHES = {
     }
 }
 
-if 'test' in sys.argv:
+if "test" in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / 'test_db_sqlite3',
+            "NAME": BASE_DIR / "test_db_sqlite3",
         }
     }
