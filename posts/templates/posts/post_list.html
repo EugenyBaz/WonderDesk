@@ -1,0 +1,192 @@
+{% extends 'posts/home.html' %}
+{% load my_tags%}
+{% block content %}
+
+<head>
+    <style>
+        /* Уменьшение шрифтов заголовка и текста */
+        h7.card-title { font-size: 1.2rem; line-height: 1.5; margin-bottom: 0.75rem; }
+        p.card-text { font-size: 0.9rem; line-height: 1.4; }
+
+        /* Увеличение вертикальных отступов вокруг колонок с карточками */
+        div.col { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+
+        /* Карточки становятся чуть ниже и шире */
+        .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; }
+        .card:hover { transform: scale(1.02); }
+
+        /* Кнопка становится меньше */
+        a.btn { font-size: 0.7rem; padding: 0.375rem 0.75rem; }
+
+        /* Положение кнопки остаётся прежним */
+        .card-body .btn {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Уменьшение расстояния между элементами внутри карточки */
+        .card-body { padding: 0.7rem; }
+
+        /* Поисковая строка */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-container input[type="text"] {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+            width: 20rem;
+        }
+
+        .search-container button {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            color: #007bff;
+            border: 1px solid #ccc;
+            border-color: #007bff;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        .search-container button:hover,
+        .search-container button:hover {
+            background-color: #0056b3;
+            color: #fff;
+            border-color: #004990;
+        }
+        .blocked-content {position: relative;}
+
+        .overlay-blocker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.7); /* Прозрачный фон */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000; /* Важно для перекрытия основного контента */
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%; /* Ширина равна ширине мультимедийного элемента */
+            height: 65%; /* Высота равна высоте мультимедийного элемента */
+        }
+
+        .card img, .card video { /* Для видео и изображений */
+            position: relative; /* Нужна позиция relative, чтобы overlay находился относительно них */
+        }
+
+        .video-disabled video {
+            pointer-events: none; /* Запрещаем взаимодействие с элементами видео */
+            visibility: hidden;   /* Прячем само видео, оставляя только превью */
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-left: 20%; /* Сдвиг на 70% от ширины экрана */
+        }
+
+        #search-button {
+            font-size: 14px; /* Размер шрифта */
+            border-color: #007bff;
+        }
+
+        #search-input {
+            padding: 8px; /* Немного увеличим отступ внутри поля */
+            color: #007bff
+            border-radius: 4px; /* Скруглим углы */
+            font-size: 14px; /* Размер шрифта */
+            margin-right: 8px; /* Небольшой отступ справа */
+        }
+
+
+
+    </style>
+</head>
+
+<div class="search-container">
+    <form method="get" action="{% url 'posts:search_results' %}">
+        <input type="text" name="q" placeholder="Поиск по названию и описанию.." id="search-input">
+        <button type="submit" class="btn btn-primary" id="search-button">Искать</button>
+</div>
+
+<div class="d-flex justify-content-center mb-3">
+    {% if user.is_authenticated %}
+    <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_create' %}">Добавить публикацию</a>
+    {% endif %}
+</div>
+
+<div class="container">
+    <div class="row text-center">
+        {% for post in object_list %}
+        <div class="col">
+
+            <div class="card">
+                {% load custom_filters %}
+                {% with extension=post.file.name|file_extension %}
+                         {% if extension in 'mp4,mkv,avi' %}
+                            <video controls width="100%" height="200px">
+                                <{% if post.file %}
+                                    <source src="{{ post.file.url }}" type="video/mp4">
+                                {% endif %}
+                                Ваше устройство не поддерживает воспроизведение видео.
+                            </video>
+                            {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
+                                <div class="overlay-blocker">
+                                    <p>Данный контент доступен только подписчикам.</p>
+                                </div>
+                            {% endif %}
+
+                        {% elif extension in 'jpg,jpeg,png,gif' %}
+                            <img src="{{post.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ post.title }}">
+                            {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
+                                <div class="overlay-blocker">
+                                    <p>Данный контент доступен только подписчикам.</p>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                {% endwith %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ post.title }}</h6>
+                    <p class="card-text">{{ post.description | truncatechars:100 }}</p>
+                </div>
+                <div class="card-body">
+                    <a class="p-2 btn btn-outline-primary mb-0 card-link" href="{% url 'posts:post_detail' post.pk %}">Подробнее</a>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="p-2 btn btn-outline-primary" href="?page=1">« first</a>
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="list-unstyled text-small" style="color: var(--bs-primary);">
+                Страница  {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.next_page_number }}">next</a>
+                <a class="p-2 btn btn-outline-primary" href="?page={{ page_obj.paginator.num_pages }}">last »</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+{% endblock %}
+

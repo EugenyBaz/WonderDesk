@@ -1,0 +1,107 @@
+{% extends 'posts/home.html' %}
+{% load my_tags %}
+
+{% block content %}
+
+<head>
+    <style>
+        .card-body {
+            position: relative; /* Устанавливаем родительский элемент как относительный */
+        }
+
+        .card-body .btn {
+            position: absolute; /* Фиксируем кнопку относительно родительского элемента */
+            bottom: 10px; /* Отступ от нижнего края */
+            left: 50%; /* Центрирование по горизонтали */
+            transform: translateX(-50%); /* Корректировка для точного центрирования */
+        }
+
+        .btn {
+        font-size: 0.7rem; /* Уменьшаем шрифт */
+    }
+        .blocked-content {position: relative;}
+
+        .overlay-blocker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.7); /* Прозрачный фон */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000; /* Важно для перекрытия основного контента */
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%; /* Ширина равна ширине мультимедийного элемента */
+            height: 70%; /* Высота равна высоте мультимедийного элемента */
+        }
+
+        .card img, .card video { /* Для видео и изображений */
+            position: relative; /* Нужна позиция relative, чтобы overlay находился относительно них */
+        }
+        .video-disabled video {
+            pointer-events: none; /* Запрещаем взаимодействие с элементами видео */
+            visibility: hidden;   /* Прячем само видео, оставляя только превью */
+        }
+    </style>
+
+<div class="container">
+    <div class="row text-center">
+
+        <div class="col">
+            <div class="card" style="width: 25rem; height: 33rem;">
+                {% if ex == "mp4" %}
+                    <video controls width="50%" height="auto">
+                        {% if post.file %}
+                            <source src="{{ post.file.url }}" type="video/mp4">
+                        {% endif %}
+                        Ваше устройство не поддерживает воспроизведение видео.
+                    </video>
+                {% elif ex in "jpg jpeg png gif" %}
+                    <img src="{{post.file | media_filter}}" class="card-img-center" style="height: 250px; object-fit: contain;" alt="{{ post.title }}">
+                {% endif %}
+
+                <div class="card-body">
+                    <h6 class="card-title">{{ post.title }}</h6>
+                    <p class="card-text">{{ post.description | truncatechars:100 }}</p>
+                </div>
+                    <div class="ms-3 mb-2">
+                        {% if request.user == post.author %}
+                            <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_update' post.id %}">Редактировать</a>
+                        {% endif %}
+                        {% if request.user == post.author or perms.posts.can_delete_any_post %}
+                            <a class="p-2 btn btn-outline-primary" href="{% url 'posts:post_delete' post.id %}">Удалить</a>
+                        {% endif %}
+                        <a class="p-2 btn btn-outline-primary" href="/">В раздел Публикации</a>
+
+                        <!-- Отображение полного поста -->
+                        {% if post.author == request.user or request.user.subscriptions.exists %}
+<!--                            <p>{{ post.description|linebreaksbr }}</p>-->
+                        {% elif post.premium %}
+                            <!-- Для незарегистрированных пользователей или тех, кто не заплатил -->
+                            <div class="overlay-blocker">
+                                <i class="fas fa-lock fa-3x"></i>
+                                <p>Данный контент доступен только подписчикам.</p>
+                                {% if request.user.is_authenticated %}
+                                    <form action="{% url 'users:payment_api' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                                        <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                                        <button type="submit" class="btn btn-outline-primary">Оплатить подписку</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
