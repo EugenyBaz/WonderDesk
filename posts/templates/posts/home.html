@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WonderDesk</title>
+    <!-- Подключите статические файлы со стилями Bootstrap через CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Подключите ваш CSS-файл -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dark-theme">
+    {% include 'posts/includes/inc_menu.html' %}
+
+    <div class="pricing-header px-3 py-3 pt-md-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">WonderDesk</h1>
+        <p class="lead">Cервис размещения контента.</p>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        <div class="row">
+            <div class="col-12 col-md">
+                WonderDesk
+            </div>
+            <div class="col-6 col-md">
+                <h6>Категории</h6>
+                <ul class="list-unstyled text-small">
+                    <li><a class="primary" href="#">Рассылки</a></li>
+                    <li><a class="primary" href="#">Телеграм боты</a></li>
+                    <li><a class="primary" href="#">Полезные утилиты</a></li>
+                    <li><a class="primary" href="#">Веб-приложения</a></li>
+                    <li><a class="primary" href="#">Микросервисы</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h6>Дополнительно</h6>
+                <ul class="list-unstyled text-small">
+                    <li><a class="primary" href="#">Мы пишем</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h6>О нас</h6>
+                <ul class="list-unstyled text-small">
+                    <li><a class="primary" href="/contacts/">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Подключите статические файлы со скриптами Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

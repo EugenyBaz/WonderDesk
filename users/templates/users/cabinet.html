@@ -1,0 +1,148 @@
+{% extends 'posts/home.html' %}
+{% load my_tags %}
+
+{% block content %}
+
+<style>
+
+    /* Поля формы адаптированы под тёмный фон */
+    input[type=text], input[type="password"], input[type="email"], input[type="file"], select, textarea {
+        background-color: #495057 !important;
+        color: #fafafa !important;
+        border-color: #adb5bd !important;
+    }
+
+
+    /* Описание стиля для нашей кнопки */
+    .form-control{
+        padding: 8px 16px;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+        transition: all .3s ease-in-out;
+        background-color: #007bff;
+        color: #0056b3;
+        border-radius: 4px;
+        border: none;
+    }
+
+    /* Изменяем стиль при наведении */
+    .form-control:hover {
+        background-color: #0056b3;
+    }
+
+
+
+
+        /* Стили кнопок */
+    button.btn,
+    a.btn {
+        font-size: 0,7rem;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    button.btn-primary,
+    a.btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        margin-top: 20px;
+    }
+
+    button.btn-primary:hover,
+    a.btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004990;
+    }
+
+    /* Кнопка отмены */
+    a.btn-outline-primary {
+        color: #007bff;
+        background-color: transparent;
+        border-color: #007bff;
+    }
+
+    a.btn-outline-primary:hover {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn {
+        font-size: 0.7rem; /* Уменьшаем шрифт */
+    }
+
+        /* Стили для select */
+    select.form-control {
+        padding: 8px 16px;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+        transition: all .3s ease-in-out;
+        background-color: #007bff;
+        color: #0056b3;
+        border-radius: 4px;
+        border: none;
+        width: 100%; /* Задаем ширину на всю доступную область */
+    }
+
+    /* Изменяем стиль при наведении */
+    select.form-control:hover {
+        background-color: #0056b3;
+    }
+
+    /* Стили для стрелки выпадающего списка */
+    select.form-control::-ms-expand {
+        display: none; /* Скрываем стрелку в IE */
+    }
+
+    select.form-control::-webkit-calendar-picker-indicator {
+        display: none; /* Скрываем стрелку в Chrome */
+    }
+
+    select.form-control::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #fafafa;
+    }
+
+    label[for="id_subscription_level"] {
+    color: #007bff;
+}
+
+
+</style>
+
+<h1>Личный кабинет</h1>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if has_subscription %}
+        <div class="form-group">
+            <label for="id_subscription_level">Уровень подписки:</label>
+            <select id="id_subscription_level" name="subscription_level" class="form-control">
+                <option value="SINGLE">Разовая подписка</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    {% else %}
+        <p>Подписка отсутствует.</p>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    {% endif %}
+</form>
+
+<!-- Подключите статические файлы со скриптами Bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}
