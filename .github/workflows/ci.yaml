@@ -138,5 +138,5 @@ jobs:
             docker stop wonderdesk || true
             docker rm wonderdesk || true
             cd ~/WonderDesk
-            docker compose -f docker-compose.yaml down
-            docker compose -f docker-compose.yaml up -d
+            docker compose --file docker-compose.yaml down
+            docker compose --file docker-compose.yaml up -d
