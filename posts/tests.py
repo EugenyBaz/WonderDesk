@@ -91,7 +91,6 @@ class SearchResultsViewTest(TestCase):
         self.assertEqual(len(response.context["results"]), 2)
         self.assertEqual(response.context["query"], search_term)
 
-
     def test_partial_match_search(self):
         """Проверка частичных совпадений при поиске."""
         url = reverse("posts:search_results")
