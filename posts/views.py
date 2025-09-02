@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
-
+from django.db.models import Q
 from posts.forms import PostForm
 from posts.models import Post, Subscription
 from posts.paginations import CustomPagination
@@ -146,13 +146,11 @@ class SearchResultsView(TemplateView):
     template_name = "posts/search_results.html"
 
     def get(self, request, *args, **kwargs):
-        query = request.GET.get("q", "").strip()  # Получаем запрос и очищаем пробелы
+        query = request.GET.get("q", "")  # Получаем запрос и очищаем пробелы
 
         if query:
             # Производим поиск по названию и описанию
-            title_query = Post.objects.filter(title__icontains=query)
-            desc_query = Post.objects.filter(description__icontains=query)
-            results = title_query.union(desc_query)
+            results = Post.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
         else:
             # Если запрос пустой, возвращаем пустую коллекцию
             results = Post.objects.none()
