@@ -1,16 +1,11 @@
 import uuid
 from unittest.mock import patch
-import pytest
-import stripe
 from django.http import HttpResponseRedirect
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
-
-from config.settings import STRIPE_API_KEY
 from posts.models import Post
 from users.forms import UserRegisterForm
 from users.models import User
-from users.services import create_stripe_product
 from users.views import UserCreateView
 
 
@@ -111,5 +106,3 @@ class LogoutViewTest(TestCase):
 
         # Проверяем перенаправление на главную страницу
         self.assertRedirects(response, "/")
-
-

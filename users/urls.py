@@ -4,17 +4,8 @@ from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.apps import UsersConfig
-from users.views import (
-    CabinetView,
-    CustomLogoutView,
-    PaymentListView,
-    UserCreateView,
-    UserViewSet,
-    payment_api_view,
-    payment_page,
-    payment_success,
-    verify_phone,
-)
+from users.views import (CabinetView, CustomLogoutView, PaymentListView, UserCreateView, UserViewSet, payment_api_view,
+                         payment_page, payment_success, verify_phone)
 
 router = SimpleRouter()
 router.register(r"users", UserViewSet)
