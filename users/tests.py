@@ -1,13 +1,16 @@
 import uuid
 from unittest.mock import patch
-
+import pytest
+import stripe
 from django.http import HttpResponseRedirect
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
+from config.settings import STRIPE_API_KEY
 from posts.models import Post
 from users.forms import UserRegisterForm
 from users.models import User
+from users.services import create_stripe_product
 from users.views import UserCreateView
 
 
@@ -101,12 +104,12 @@ class LogoutViewTest(TestCase):
         # Убедимся, что пользователь изначально авторизован
         self.assertTrue("_auth_user_id" in self.client.session)
 
-        # Осуществляем выход
         response = self.client.get(reverse("users:logout"))
 
-        # Проверяем, что произошел выход и сессионные данные удалены
         self.assertEqual(response.status_code, 302)  # Статус 302 - перенаправление
         self.assertFalse("_auth_user_id" in self.client.session)
 
         # Проверяем перенаправление на главную страницу
         self.assertRedirects(response, "/")
+
+

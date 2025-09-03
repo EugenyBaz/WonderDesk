@@ -1,6 +1,28 @@
 <!doctype html>
 <html lang="en">
 
+<style>
+.logo {
+    font-family: 'Imprint MT Shadow', cursive;
+    font-size: 32px;
+    color: #007bff; /* Цвет текста primary */
+    background-color: #212529; /* Тёмный фон внутри круга */
+    border-radius: 50%; /* Круглая форма */
+    padding: 10px 20px;
+    display: inline-block;
+    width: 100px; /* Ширина круга */
+    height: 100px; /* Высота круга */
+    line-height: 100px; /* Центровка текста по вертикали */
+    text-align: center; /* Центровка текста по горизонтали */
+    border: 2px solid #007bff; /* Обрамление primary */
+    display: flex; /* Используем flexbox для центрирования */
+    justify-content: center; /* Центровка по горизонтали */
+    align-items: center; /* Центровка по вертикали */
+    margin-left: 0;
+    margin-right: auto;
+}
+
+</style>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +31,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Подключите ваш CSS-файл -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="dark-theme">
     {% include 'posts/includes/inc_menu.html' %}

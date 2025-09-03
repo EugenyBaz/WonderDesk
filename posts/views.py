@@ -24,7 +24,7 @@ class PostListView(ListView):
             if obj.file:
                 extensions[obj.id] = obj.file.name.split(".")[-1]
             else:
-                extensions[obj.id] = "unknown"  # Значение по умолчанию
+                extensions[obj.id] = "unknown"
         context["extensions"] = extensions
         return context
 
@@ -123,7 +123,7 @@ def post_detail(request, pk):
     if not post.premium:
         return render(request, "posts:post_detail", {"post": post, "ex": file_extentions})
 
-    # Платные посты видим только подписанным пользователям
+    # Платные посты видят только подписанные пользователи
     try:
         subscription = Subscription.objects.get(user=request.user)
         if subscription.active:

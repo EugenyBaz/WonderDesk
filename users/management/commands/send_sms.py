@@ -20,10 +20,3 @@ class Command(BaseCommand):
         status_code = response.get("status_code", "")
         print(f"Status code: {status_code}")
         print(f"Response body: {response}")
-
-        # number = ''
-        # message = 'Салют от csu'
-        # response = send_sms(number, message)
-        # status_code = response.get('status_code', '')
-        # print(f"Status code: {status_code}")
-        # print(f"Response body: {response}")

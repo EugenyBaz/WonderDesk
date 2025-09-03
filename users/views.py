@@ -18,7 +18,6 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from posts.models import Subscription
 from users.forms import SubscriptionForm, UserProfileForm, UserRegisterForm, VerificationCodeForm
 from users.models import Payment, User
@@ -60,7 +59,6 @@ class UserCreateView(SuccessMessageMixin, CreateView):
         self.request.session["email"] = email
         self.request.session["password"] = password
 
-        # return super().form_valid(form)
         return redirect("users:verify-phone")
 
 
@@ -159,8 +157,6 @@ def payment_api_view(request):
             subscription.set_end_date()  # Устанавливаем конец подписки
             subscription.save()
 
-            # return render(request, 'users/error.html', {"message": "Подписка не найдена"})
-
         # Создаем продукт и цену в Stripe
         post_id = create_stripe_product(subscription.subscription_level)
         amount_in_rub = subscription.price
@@ -198,7 +194,6 @@ def payment_success(request):
         else:
             messages.warning(request, "Платеж пока не подтвержден.")
 
-        # Предполагаем, что идентификатор поста сохранён в метаданных Stripe-сессии
         post_pk = checkout_session.metadata.get("post_id")
         return redirect("posts:post_detail", pk=post_pk)
     except Exception as e:
@@ -219,7 +214,7 @@ class CabinetView(LoginRequiredMixin, FormView):
         initial["email"] = self.request.user.email
         initial["country"] = self.request.user.country
 
-        # Попробуем получить подписку пользователя, но спокойно обойдем ошибку, если её нет
+        # Попробуем получить подписку пользователя
         subscription = Subscription.objects.filter(user=self.request.user).first()
         if subscription:
             initial["subscription_level"] = subscription.subscription_level
