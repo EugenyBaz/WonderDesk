@@ -158,6 +158,8 @@ def payment_api_view(request):
             subscription.set_end_date()  # Устанавливаем конец подписки
             subscription.save()
 
+            # return render(request, 'users/error.html', {"message": "Подписка не найдена"})
+
         # Создаем продукт и цену в Stripe
         post_id = create_stripe_product(subscription.subscription_level)
         amount_in_rub = subscription.price
@@ -195,6 +197,7 @@ def payment_success(request):
         else:
             messages.warning(request, "Платеж пока не подтвержден.")
 
+        # Предполагаем, что идентификатор поста сохранён в метаданных Stripe-сессии
         post_pk = checkout_session.metadata.get("post_id")
         return redirect("posts:post_detail", pk=post_pk)
     except Exception as e:
