@@ -1,8 +1,10 @@
 import uuid
 from unittest.mock import patch
+
 from django.http import HttpResponseRedirect
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
+
 from posts.models import Post
 from users.forms import UserRegisterForm
 from users.models import User
