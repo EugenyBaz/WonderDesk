@@ -43,12 +43,16 @@ class VerificationCodeForm(forms.Form):
 
 
 class UserProfileForm(StyleFormMixin, forms.ModelForm):
+    """Создаем форму с пользователя с заданными полями"""
+
     class Meta:
         model = User
         fields = ["avatar", "email", "country"]
 
 
 class SubscriptionForm(forms.ModelForm):
+    """Создаем форму поля уровень подписки"""
+
     class Meta:
         model = Subscription
         fields = ["subscription_level"]

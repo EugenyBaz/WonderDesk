@@ -60,7 +60,6 @@ class UserCreateView(SuccessMessageMixin, CreateView):
         self.request.session["email"] = email
         self.request.session["password"] = password
 
-        # return super().form_valid(form)
         return redirect("users:verify-phone")
 
 
@@ -176,6 +175,7 @@ def payment_api_view(request):
             stripe_payment_id=session_id,
             link_payment=payment_link,
         )
+
         subscription.active = True
         subscription.save()
 
@@ -201,6 +201,7 @@ def payment_success(request):
         # Предполагаем, что идентификатор поста сохранён в метаданных Stripe-сессии
         post_pk = checkout_session.metadata.get("post_id")
         return redirect("posts:post_detail", pk=post_pk)
+
     except Exception as e:
         messages.error(request, f"Ошибка обработки платежа: {e}")
         return redirect("posts:post_detail")
@@ -219,7 +220,7 @@ class CabinetView(LoginRequiredMixin, FormView):
         initial["email"] = self.request.user.email
         initial["country"] = self.request.user.country
 
-        # Попробуем получить подписку пользователя, но спокойно обойдем ошибку, если её нет
+        # Попробуем получить подписку пользователя
         subscription = Subscription.objects.filter(user=self.request.user).first()
         if subscription:
             initial["subscription_level"] = subscription.subscription_level

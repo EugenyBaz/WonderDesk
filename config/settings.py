@@ -64,8 +64,8 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # Ваш путь к дополнительным шаблонам, если есть
-        "APP_DIRS": True,  # Поиск шаблонов внутри приложений включен
+        "DIRS": [],
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -74,7 +74,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "libraries": {
-                "custom_filters": "posts.filters",  # Путь к вашему файлу фильтров
+                "custom_filters": "posts.filters",
             },
         },
     },
@@ -138,7 +138,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"

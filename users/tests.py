@@ -101,10 +101,8 @@ class LogoutViewTest(TestCase):
         # Убедимся, что пользователь изначально авторизован
         self.assertTrue("_auth_user_id" in self.client.session)
 
-        # Осуществляем выход
         response = self.client.get(reverse("users:logout"))
 
-        # Проверяем, что произошел выход и сессионные данные удалены
         self.assertEqual(response.status_code, 302)  # Статус 302 - перенаправление
         self.assertFalse("_auth_user_id" in self.client.session)
 
