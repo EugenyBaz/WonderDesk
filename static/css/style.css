@@ -6,14 +6,14 @@
 
 .logo {
     font-family: 'Imprint MT Shadow', cursive;
-    font-size: 32px;
+    font-size: 30px;
     color: #007bff; /* Цвет текста primary */
     background-color: #212529; /* Тёмный фон внутри круга */
-    border-radius: 50%; /* Круглая форма */
+    border-radius: 100%; /* Круглая форма */
     padding: 10px 20px;
     display: inline-block;
-    width: 85px; /* Ширина круга */
-    height: 85px; /* Высота круга */
+    width: 80px; /* Ширина круга */
+    height: 80px; /* Высота круга */
     line-height: 100px; /* Центровка текста по вертикали */
     text-align: center; /* Центровка текста по горизонтали */
     border: 2px solid #007bff; /* Обрамление primary */
@@ -162,19 +162,6 @@ p.card-text {
     line-height: 1.4;
 }
 
-/* Сжатие текста до ширины карточки */
-.card-body {
-    overflow: hidden; /* Скрытие переполнения */
-    text-overflow: ellipsis; /* Добавление многоточия */
-    white-space: nowrap; /* Запрет переноса строк */
-}
-
-/* Замена не помещающихся символов на многоточие */
-h6.card-title, p.card-text {
-    overflow: hidden; /* Скрытие переполнения */
-    text-overflow: ellipsis; /* Добавление многоточия */
-    white-space: nowrap; /* Запрет переноса строк */
-}
 
 /* Стили для формы */
 form {

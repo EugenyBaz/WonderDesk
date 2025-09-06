@@ -67,7 +67,7 @@
 
                 <div class="card-body">
                     <h6 class="card-title">{{ post.title }}</h6>
-                    <p class="card-text">{{ post.description | truncatechars:250 }}</p>
+                    <p class="card-text">{{ post.description |truncatechars:250 }}</p>
                 </div>
                     <div class="ms-3 mb-2">
                         {% if request.user == post.author %}

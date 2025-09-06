@@ -175,6 +175,7 @@ def payment_api_view(request):
             stripe_payment_id=session_id,
             link_payment=payment_link,
         )
+
         subscription.active = True
         subscription.save()
 
@@ -200,6 +201,7 @@ def payment_success(request):
         # Предполагаем, что идентификатор поста сохранён в метаданных Stripe-сессии
         post_pk = checkout_session.metadata.get("post_id")
         return redirect("posts:post_detail", pk=post_pk)
+
     except Exception as e:
         messages.error(request, f"Ошибка обработки платежа: {e}")
         return redirect("posts:post_detail")
