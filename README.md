@@ -46,6 +46,53 @@
 
 
 ### Установка зависимостей
+[tool.poetry]
+name = "wonderdesk"
+version = "0.1.0"
+description = ""
+authors = ["Bazavod <eugeny.bazavod@list.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.2.5"
+pandas = "^2.3.1"
+requests = "^2.32.4"
+openpyxl = "^3.1.5"
+python-dotenv = "^1.1.1"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+psycopg2-binary = "^2.9.10"
+pillow = "^11.3.0"
+ipython = "^9.4.0"
+redis = "^6.4.0"
+djangorestframework-simplejwt = "^5.5.1"
+django-filter = "^25.1"
+stripe = "^12.4.0"
+coverage = "^7.10.6"
+gunicorn = "^23.0.0"
+
+
+[tool.poetry.group.lint.dependencies]
+black = "^25.1.0"
+isort = "^6.0.1"
+flake8 = "^7.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+exclude = '''(\.git)'''
+
+[tool.isort]
+line_length = 119
+
+[tool.mypy]
+disallow_untyped_defs = true
+warn_return_any = true
+exclude = 'venv'
 
 
 ### Запуск Development сервера
@@ -67,12 +114,11 @@
 2. Деплой проекта
 2.1. Клонирование репозитория
 2.2 Сделайте commit and push, 
-2.3 Откройте ditgub раздел actions для проверки состояния. После успешного pipline 
+2.3 Откройте gitgub раздел actions для проверки состояния. После успешного pipeline 
 перейдите к проверке работы приложения
 
-
 3. Проверка работы приложения
-Откройте браузер и перейдите по адресу http://130.193.43.52:8000/
+Откройте браузер и перейдите по адресу http://89.169.171.220:8000/
 
 ## Contributing
 
