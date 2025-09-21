@@ -86,17 +86,17 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
+          until pg_isready -h postgres -p 5432 -U postgres; do
             sleep 1
           done
 
       - name: Run migrations and tests
         env:
-          POSTGRES_DB: postgres
+          POSTGRES_DB: wonderdesk
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           SECRET_KEY: secret
-          POSTGRES_HOST: localhost
+          POSTGRES_HOST: postgres
 
         run: |
           poetry run python manage.py migrate
