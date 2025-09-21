@@ -49,7 +49,7 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: postgres
+          POSTGRES_DB: wonderdesk
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports: [ '5432:5432' ]
