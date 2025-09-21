@@ -49,6 +49,6 @@ services:
 
 volumes:
   postgres_data:
-  static_volume:
+  staticfiles:
   media_volume:
   redis_data:
