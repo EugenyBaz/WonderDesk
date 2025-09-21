@@ -49,7 +49,7 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: wonderdesk
+          POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports: [ '5432:5432' ]
@@ -86,17 +86,17 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h db -p 5432 -U postgres; do
+          until pg_isready -h localhost -p 5432 -U postgres; do
             sleep 1
           done
 
       - name: Run migrations and tests
         env:
-          POSTGRES_DB: wonderdesk
+          POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           SECRET_KEY: secret
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
 
         run: |
           poetry run python manage.py migrate
