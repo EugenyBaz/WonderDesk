@@ -26,5 +26,4 @@ urlpatterns = [
     path("payment_api/", payment_api_view, name="payment_api"),
     path("api/", include(router.urls)),
     path("payment-success/", payment_success, name="payment_success"),
-    # path("payments_create/", PaymentCreateAPIView.as_view(), name="payments_create"),
 ]

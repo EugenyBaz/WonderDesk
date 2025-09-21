@@ -112,7 +112,7 @@
 
                             {% elif extension in 'jpg,jpeg,png,gif' %}
                                 <img src="{{result.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ result.title }}">
-                                {% if result.premium %}
+                                {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
                                     <div class="overlay-blocker">
                                         <i class="fas fa-lock fa-3x"></i>
                                         <p>Данный контент доступен только подписчикам.</p>
