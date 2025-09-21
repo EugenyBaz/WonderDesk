@@ -96,7 +96,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           SECRET_KEY: secret
-          POSTGRES_HOST: db
+          POSTGRES_HOST: postgres
 
         run: |
           poetry run python manage.py migrate
