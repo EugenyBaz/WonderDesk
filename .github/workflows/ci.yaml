@@ -86,7 +86,7 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h postgres -p 5432 -U postgres; do
+          until pg_isready -h db -p 5432 -U postgres; do
             sleep 1
           done
 
@@ -96,7 +96,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           SECRET_KEY: secret
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: db
 
         run: |
           poetry run python manage.py migrate
