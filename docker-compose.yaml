@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    command: sh -c "python manage.py wait_for_db && python manage.py collectstatic --noinput && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
       - staticfiles:/app/staticfiles
@@ -21,11 +21,9 @@ services:
       - "80:80"  # HTTP
       - "443:443"  # HTTPS
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - staticfiles:/app/staticfiles
       - media_volume:/app/media
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - web
 
