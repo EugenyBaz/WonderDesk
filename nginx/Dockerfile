@@ -1,9 +1,9 @@
-FROM nginx:latest
+FROM nginx:1.25-alpine
 
-RUN mkdir -p /app/staticfiles
+# Удаляем дефолтные конфиги, чтобы не мешали
+RUN rm -f /etc/nginx/conf.d/default.conf
 
-COPY nginx.conf /etc/nginx/nginx.conf
+# Копируем наш конфиг nginx
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Копируем папку для certbot (чтобы Let’s Encrypt мог проверить домен)
+RUN mkdir -p /var/www/certbot
