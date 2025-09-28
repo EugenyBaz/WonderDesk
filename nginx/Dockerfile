@@ -1,7 +1,13 @@
-FROM nginx:latest
+FROM nginx:1.25-alpine
 
-RUN mkdir -p /app/staticfiles
+# Удаляем дефолтный конфиг
+RUN rm -f /etc/nginx/conf.d/default.conf
 
+# Копируем основной nginx.conf (глобальный)
 COPY nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 80
+# Копируем server-конфиги
+COPY conf.d/ /etc/nginx/conf.d/
+
+# Папка для certbot
+RUN mkdir -p /var/www/certbot
