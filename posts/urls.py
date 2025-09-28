@@ -3,8 +3,15 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from posts.apps import PostsConfig
-from posts.views import (PostCreateView, PostDeleteView, PostDetailView, PostListView, PostUpdateView,
-                         SearchResultsView, contacts)
+from posts.views import (
+    PostCreateView,
+    PostDeleteView,
+    PostDetailView,
+    PostListView,
+    PostUpdateView,
+    SearchResultsView,
+    contacts,
+)
 
 app_name = PostsConfig.name
 
