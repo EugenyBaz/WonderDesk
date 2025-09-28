@@ -138,13 +138,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATIC_URL = "http://89.169.171.220:8080/static/"
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_URL = "http://89.169.171.220:8080/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -201,3 +203,13 @@ if "test" in sys.argv:
             "NAME": BASE_DIR / "test_db_sqlite3",
         }
     }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://wonderdesk.ru",
+    "https://www.wonderdesk.ru",
+]
+CSRF_COOKIE_SECURE = False
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+CSRF_COOKIE_HTTPONLY = False
+# Разрешаем загрузку до 250 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
