@@ -75,7 +75,7 @@
             <form method="POST" enctype="multipart/form-data">
                 <div class="card mb-3">
                     <h5 class="card-header bg-dark p-3" >Новая публикация</h5>
-                    <div class="card-body" style="width: 50rem;background-color: #212529;">
+                    <div class="card-body" style="background-color: #212529;">
                         {% csrf_token %}
                         {{ form.as_p }}
                     </div>
