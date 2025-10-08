@@ -10,21 +10,6 @@
         border-color: #adb5bd !important;
     }
 
-    /* Карточки становятся чуть ниже и шире */
-    .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; background-color: #212529; }
-    .card:hover { transform: scale(1.02); }
-
-    /* Кнопка становится меньше */
-    a.btn { font-size: 0.7rem; padding: 0.375rem 0.75rem; }
-
-    /* Положение кнопки остаётся прежним */
-    .card-body .btn {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
         /* Стили кнопок */
     button.btn,
     a.btn {
@@ -35,21 +20,6 @@
         display: inline-block;
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
-    }
-    
-        /* Карточки становятся чуть ниже и шире */
-    .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; }
-    .card:hover { transform: scale(1.02); }
-
-    /* Кнопка становится меньше */
-    a.btn { font-size: 0.7rem; padding: 0.375rem 0.75rem; }
-
-    /* Положение кнопки остаётся прежним */
-    .card-body .btn {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
     }
 
     button.btn-primary,
@@ -123,7 +93,7 @@
             {% if results %}
                 {% for result in results %}
                 <div class="col">
-                    <div class="card" style="width: 13rem; height: 20rem; background-color: #212529;">
+                    <div class="card">
                         {% load custom_filters %}
                         {% with extension=result.file.name|file_extension %}
                              {% if extension in 'mp4,mkv,avi' %}
@@ -142,7 +112,7 @@
 
                             {% elif extension in 'jpg,jpeg,png,gif' %}
                                 <img src="{{result.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ result.title }}">
-                                {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
+                                {% if result.premium %}
                                     <div class="overlay-blocker">
                                         <i class="fas fa-lock fa-3x"></i>
                                         <p>Данный контент доступен только подписчикам.</p>

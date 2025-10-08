@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -64,8 +65,8 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
+        "DIRS": [],  # Ваш путь к дополнительным шаблонам, если есть
+        "APP_DIRS": True,  # Поиск шаблонов внутри приложений включен
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -74,7 +75,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "libraries": {
-                "custom_filters": "posts.filters",
+                "custom_filters": "posts.filters",  # Путь к вашему файлу фильтров
             },
         },
     },
@@ -138,15 +139,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 STATIC_URL = "/static/"
-# STATIC_URL = "http://89.169.171.220:8080/static/"
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
-# MEDIA_URL = "http://89.169.171.220:8080/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -196,20 +193,10 @@ CACHES = {
     }
 }
 
-if "test" in sys.argv:
+if 'test' in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "test_db_sqlite3",
+            "NAME": BASE_DIR / 'test_db_sqlite3',
         }
     }
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://wonderdesk.ru",
-    "https://www.wonderdesk.ru",
-]
-CSRF_COOKIE_SECURE = False
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None
-CSRF_COOKIE_HTTPONLY = False
-# Разрешаем загрузку до 250 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
