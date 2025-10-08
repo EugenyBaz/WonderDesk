@@ -185,3 +185,61 @@ form {
     margin: 0 auto; /* Центровка формы */
 }
 
+html, body {
+    max-width: 100%;
+    overflow-x: hidden; /* убирает люфт */
+}
+
+/* ===== Адаптивность ===== */
+@media (max-width: 1200px) {
+    .container {
+        width: 95%;
+    }
+    .card {
+        width: 12rem;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 5px;
+    }
+
+    .card {
+        width: 90%;
+        height: auto;
+        margin: 10px auto;
+    }
+
+    .logo {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    h6.card-title {
+        font-size: 0.9rem;
+    }
+
+    p.card-text {
+        font-size: 0.75rem;
+    }
+
+    form {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .card {
+        width: 95%;
+    }
+}
