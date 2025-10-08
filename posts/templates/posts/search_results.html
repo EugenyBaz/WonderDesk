@@ -36,6 +36,21 @@
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
     }
+    
+        /* Карточки становятся чуть ниже и шире */
+    .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; }
+    .card:hover { transform: scale(1.02); }
+
+    /* Кнопка становится меньше */
+    a.btn { font-size: 0.7rem; padding: 0.375rem 0.75rem; }
+
+    /* Положение кнопки остаётся прежним */
+    .card-body .btn {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
     button.btn-primary,
     a.btn-primary {
