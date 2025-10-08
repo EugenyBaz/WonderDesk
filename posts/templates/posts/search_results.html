@@ -10,8 +10,8 @@
         border-color: #adb5bd !important;
     }
 
-        /* Карточки становятся чуть ниже и шире */
-    .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; }
+    /* Карточки становятся чуть ниже и шире */
+    .card { width: 13rem; height: 20rem; min-height: 10rem; box-shadow: 0 2px 5px rgba(0,0,0,.1); border-radius: 0.5rem; transition: all 0.3s ease-in-out; background-color: #212529; }
     .card:hover { transform: scale(1.02); }
 
     /* Кнопка становится меньше */
@@ -108,7 +108,7 @@
             {% if results %}
                 {% for result in results %}
                 <div class="col">
-                    <div class="card" style="background-color: #212529;">
+                    <div class="card" style="width: 13rem; height: 20rem; background-color: #212529;">
                         {% load custom_filters %}
                         {% with extension=result.file.name|file_extension %}
                              {% if extension in 'mp4,mkv,avi' %}
