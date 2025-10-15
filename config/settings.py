@@ -20,7 +20,6 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -65,8 +64,8 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # Ваш путь к дополнительным шаблонам, если есть
-        "APP_DIRS": True,  # Поиск шаблонов внутри приложений включен
+        "DIRS": [],
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -75,7 +74,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "libraries": {
-                "custom_filters": "posts.filters",  # Путь к вашему файлу фильтров
+                "custom_filters": "posts.filters",
             },
         },
     },
@@ -193,10 +192,43 @@ CACHES = {
     }
 }
 
-if 'test' in sys.argv:
+if "test" in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / 'test_db_sqlite3',
+            "NAME": BASE_DIR / "test_db_sqlite3",
         }
     }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://wonderdesk.ru",
+    "https://www.wonderdesk.ru",
+]
+CSRF_COOKIE_SECURE = False
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+CSRF_COOKIE_HTTPONLY = False
+# Разрешаем загрузку до 250 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # Увеличиваем уровень до DEBUG
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],  # Сообщения Django идут в консоль
+            'level': 'INFO',          # Минимальный уровень для Django
+            'propagate': True,
+        },
+        'users': {              # Название приложения
+            'handlers': ['console'],   # Логируем через консоль
+            'level': 'DEBUG',          # Подробные debug-сообщения
+            'propagate': True,
+        },
+    },
+}
