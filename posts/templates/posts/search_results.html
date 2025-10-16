@@ -93,7 +93,7 @@
             {% if results %}
                 {% for result in results %}
                 <div class="col">
-                    <div class="card">
+                    <div class="card" style="width: 13rem; height: 20rem; background-color: #212529;">
                         {% load custom_filters %}
                         {% with extension=result.file.name|file_extension %}
                              {% if extension in 'mp4,mkv,avi' %}
@@ -112,7 +112,7 @@
 
                             {% elif extension in 'jpg,jpeg,png,gif' %}
                                 <img src="{{result.file | media_filter}}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ result.title }}">
-                                {% if result.premium %}
+                                {% if post.premium and user.phone_number != post.author.phone_number and not request.user.subscriptions.exists %}
                                     <div class="overlay-blocker">
                                         <i class="fas fa-lock fa-3x"></i>
                                         <p>Данный контент доступен только подписчикам.</p>

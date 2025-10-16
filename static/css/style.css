@@ -4,18 +4,17 @@
     padding: 10px; /* Отступы */
 }
 
-/* Логотип в круге с цветом primary */
 .logo {
     font-family: 'Imprint MT Shadow', cursive;
-    font-size: 32px;
+    font-size: 30px;
     color: #007bff; /* Цвет текста primary */
     background-color: #212529; /* Тёмный фон внутри круга */
-    border-radius: 50%; /* Круглая форма */
+    border-radius: 100%; /* Круглая форма */
     padding: 10px 20px;
     display: inline-block;
-    width: 100px; /* Ширина круга */
-    height: 100px; /* Высота круга */
-    line-height: 100px; /* Центровка текста по вертикали */
+    width: 80px; /* Ширина круга */
+    height: 80px; /* Высота круга */
+    line-height: 80px; /* Центровка текста по вертикали */
     text-align: center; /* Центровка текста по горизонтали */
     border: 2px solid #007bff; /* Обрамление primary */
     display: flex; /* Используем flexbox для центрирования */
@@ -24,7 +23,6 @@
     margin-left: 0;
     margin-right: auto;
 }
-
 /* Более тёмная тема */
 .dark-theme {
     background-color: #121212; /* Более тёмный фон */
@@ -101,8 +99,8 @@ body {
 
 /* Уменьшение размера карточек */
 .card {
-    width: 12rem; /* Уменьшение ширины */
-    height: auto;
+    width: 13rem; /* Уменьшение ширины */
+    height: 20rem;
     min-height: 15rem; /* Уменьшение минимальной высоты */
     box-shadow: 0 2px 5px rgba(0,0,0,.1);
     border-radius: 0.5rem;
@@ -164,19 +162,6 @@ p.card-text {
     line-height: 1.4;
 }
 
-/* Сжатие текста до ширины карточки */
-.card-body {
-    overflow: hidden; /* Скрытие переполнения */
-    text-overflow: ellipsis; /* Добавление многоточия */
-    white-space: nowrap; /* Запрет переноса строк */
-}
-
-/* Замена не помещающихся символов на многоточие */
-h6.card-title, p.card-text {
-    overflow: hidden; /* Скрытие переполнения */
-    text-overflow: ellipsis; /* Добавление многоточия */
-    white-space: nowrap; /* Запрет переноса строк */
-}
 
 /* Стили для формы */
 form {
@@ -190,56 +175,3 @@ html, body {
     overflow-x: hidden; /* убирает люфт */
 }
 
-/* ===== Адаптивность ===== */
-@media (max-width: 1200px) {
-    .container {
-        width: 95%;
-    }
-    .card {
-        width: 12rem;
-        height: auto;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 5px;
-    }
-
-    .card {
-        width: 90%;
-        height: auto;
-        margin: 10px auto;
-    }
-
-    .logo {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-    }
-
-    h6.card-title {
-        font-size: 0.9rem;
-    }
-
-    p.card-text {
-        font-size: 0.75rem;
-    }
-
-    form {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .logo {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-    }
-
-    .card {
-        width: 95%;
-    }
-}

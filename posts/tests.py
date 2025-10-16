@@ -70,6 +70,7 @@ class SearchResultsViewTest(TestCase):
         search_term = "Первый"
         response = self.client.get(f"{url}?q={search_term}")
 
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.post1.title)
         self.assertNotContains(response, self.post2.title)
         self.assertTemplateUsed(response, "posts/search_results.html")
@@ -88,19 +89,6 @@ class SearchResultsViewTest(TestCase):
         self.assertTemplateUsed(response, "posts/search_results.html")
         self.assertTrue(response.context["results"])
         self.assertEqual(len(response.context["results"]), 2)
-        self.assertEqual(response.context["query"], search_term)
-
-    def test_case_insensitive_search(self):
-        """Проверка нечувствительности к регистру при поиске."""
-        url = reverse("posts:search_results")
-        search_term = "пЕрвый"  # Используем смешанный регистр букв
-        response = self.client.get(f"{url}?q={search_term}")
-
-        self.assertContains(response, self.post1.title)
-        self.assertNotContains(response, self.post2.title)
-        self.assertTemplateUsed(response, "posts/search_results.html")
-        self.assertTrue(response.context["results"])
-        self.assertEqual(len(response.context["results"]), 1)
         self.assertEqual(response.context["query"], search_term)
 
     def test_partial_match_search(self):

@@ -53,8 +53,6 @@ class UserCreateView(SuccessMessageMixin, CreateView):
         # Генерируем код подтверждения и отправляем SMS
         verification_code = generate_verification_code()
         send_sms(phone_number, f"Ваш код подтверждения: {verification_code}")
-        resp = send_sms(phone_number, f"Ваш код подтверждения: {verification_code}")
-        print("SMS.RU response:", resp)
 
         # Временное хранение кода в сессии
         self.request.session["verification_code"] = verification_code
@@ -98,14 +96,11 @@ def payment_page(request):
 
 
 def verify_phone(request):
-    logger.info("Начинаем запрос POST")
     if request.method == "POST":
         form = VerificationCodeForm(request.POST)
-        logger.info("Получен POST-запрос на проверку кода.")  # Логируем получение POST-запроса
         if form.is_valid():
             entered_code = form.cleaned_data["code"]
             expected_code = request.session.get("verification_code")
-            logger.debug(f"Пользователь ввёл код: {entered_code}, ожидаемый код: {expected_code}")  # Логируем коды
             if entered_code == expected_code:
                 phone_number = request.session.get("phone_number")
                 email = request.session.get("email")

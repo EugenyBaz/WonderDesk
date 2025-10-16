@@ -138,11 +138,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_URL = "http://89.169.171.220:8080/static/"
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_URL = "http://89.169.171.220:8080/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -209,26 +213,3 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 CSRF_COOKIE_HTTPONLY = False
 # Разрешаем загрузку до 250 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',  # Увеличиваем уровень до DEBUG
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],  # Сообщения Django идут в консоль
-            'level': 'INFO',          # Минимальный уровень для Django
-            'propagate': True,
-        },
-        'users': {              # Название приложения
-            'handlers': ['console'],   # Логируем через консоль
-            'level': 'DEBUG',          # Подробные debug-сообщения
-            'propagate': True,
-        },
-    },
-}

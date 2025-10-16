@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.forms import BooleanField, ModelForm
+
 from posts.constants import FORBIDDEN_WORDS
 from posts.models import Post
 

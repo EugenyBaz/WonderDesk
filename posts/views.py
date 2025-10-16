@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
@@ -23,7 +24,7 @@ class PostListView(ListView):
             if obj.file:
                 extensions[obj.id] = obj.file.name.split(".")[-1]
             else:
-                extensions[obj.id] = "unknown"  # Значение по умолчанию
+                extensions[obj.id] = "unknown"
         context["extensions"] = extensions
         return context
 
@@ -122,7 +123,7 @@ def post_detail(request, pk):
     if not post.premium:
         return render(request, "posts:post_detail", {"post": post, "ex": file_extentions})
 
-    # Платные посты видим только подписанным пользователям
+    # Платные посты видят только подписанные пользователи
     try:
         subscription = Subscription.objects.get(user=request.user)
         if subscription.active:
@@ -146,13 +147,11 @@ class SearchResultsView(TemplateView):
     template_name = "posts/search_results.html"
 
     def get(self, request, *args, **kwargs):
-        query = request.GET.get("q", "").strip()  # Получаем запрос и очищаем пробелы
+        query = request.GET.get("q", "")  # Получаем запрос и очищаем пробелы
 
         if query:
             # Производим поиск по названию и описанию
-            title_query = Post.objects.filter(title__icontains=query)
-            desc_query = Post.objects.filter(description__icontains=query)
-            results = title_query.union(desc_query)
+            results = Post.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
         else:
             # Если запрос пустой, возвращаем пустую коллекцию
             results = Post.objects.none()
