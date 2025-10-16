@@ -109,12 +109,6 @@
             margin-right: 8px; /* Небольшой отступ справа */
         }
 
-        .card-body {
-            overflow: hidden; /* Скрытие переполнения */
-            text-overflow: ellipsis; /* Добавление многоточия */
-            white-space: nowrap; /* Запрет переноса строк */
-        }
-
 
 
     </style>
@@ -137,7 +131,7 @@
         {% for post in object_list %}
         <div class="col">
 
-            <div class="card" style="background-color: #212529;">
+            <div class="card">
                 {% load custom_filters %}
                 {% with extension=post.file.name|file_extension %}
                          {% if extension in 'mp4,mkv,avi' %}
